@@ -4,7 +4,7 @@
 class Position {
 
 public:
-	//Konstruktori luo alkuaseman laudalle
+	//Constructor sets the starting position on the board
 	Position();
 	ChessPiece * board[8][8];
 };

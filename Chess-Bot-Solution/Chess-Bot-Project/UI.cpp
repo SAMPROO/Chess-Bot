@@ -1,6 +1,8 @@
 #include "UI.h"
 #include <windows.h>
 #include <iostream>
+#include <io.h>
+#include <fcntl.h>
 
 UI::UI(Position* position)
 {
@@ -9,20 +11,29 @@ UI::UI(Position* position)
 
 void UI::drawBoard()
 {
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_INTENSITY | BACKGROUND_RED |
-		BACKGROUND_GREEN | BACKGROUND_BLUE);
+	// Enables wcout to print unicode
+	_setmode(_fileno(stdout), _O_U16TEXT);
 
+	// For switching background color on/off
+	bool color = false;
+
+	// Printing the board and the pieces
 	for (int i = 7; i >= 0; i--)
 	{
-		std::cout << i + 1;
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 240);
+		std::wcout << i + 1;
 
 		for (int j = 0; j < 8; j++)
 		{
-			std::wcout << " " << _position->board[i][j]->getUnicode();
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color ? 96 : 240);
+			std::wcout << " " << _position->board[j][i]->getUnicode() << " ";
+
+			if(j < 7)
+				color = !color;
 		}
 
-		std::cout << "\n";
+		std::wcout << "\n";
 	}
 
-	std::cout << "  a b c d e f g h";
+	std::wcout << "  a  b  c  d  e  f  g  h";
 }

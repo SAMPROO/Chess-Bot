@@ -2,7 +2,7 @@
 
 #include <string>
 
-// Vakioarvot nappulatyypeille.
+// constants for chess pieces
 enum
 {
 	WR, WH, WB, WQ, WK, WP,
@@ -13,8 +13,8 @@ class ChessPiece {
 
 private:
 	std::wstring _unicode;
-	int _color; // valkea = 0, musta = 1
-	int _code; // VT, VR, MT tms.
+	int _color; // white = 0, black = 1
+	int _code; // enum
 public:
 	ChessPiece(std::wstring, int, int);
 	ChessPiece() {};

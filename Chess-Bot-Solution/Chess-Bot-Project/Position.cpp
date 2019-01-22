@@ -22,7 +22,7 @@ Position::Position() {
 	{
 		for (int j = 2; j < 6; j++)
 		{
-			board[i][j] = new ChessPiece();
+			board[i][j] = new ChessPiece(L" ", NULL, NULL);
 		}
 	}
 
