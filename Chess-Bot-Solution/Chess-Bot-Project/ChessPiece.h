@@ -5,8 +5,8 @@
 // Vakioarvot nappulatyypeille.
 enum
 {
-	WR, WK, WB, WQ, WB, WP,
-	BR, BK, BB, BQ, BK, BP
+	WR, WH, WB, WQ, WK, WP,
+	BR, BH, BB, BQ, BK, BP
 };
 
 class ChessPiece {
