@@ -26,7 +26,17 @@ void UI::drawBoard()
 		for (int j = 0; j < 8; j++)
 		{
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color ? 96 : 240);
-			std::wcout << " " << _position->board[j][i]->getUnicode() << " ";
+
+			ChessPiece* temp = _position->board[j][i];
+
+			if (temp)
+			{
+				std::wcout << " " << temp->getUnicode() << " ";
+			}
+			else
+			{
+				std::wcout << "   ";
+			}			
 
 			if(j < 7)
 				color = !color;
