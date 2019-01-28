@@ -6,15 +6,15 @@ class Move {
 public:
 	Move(Tile, Tile);
 	Move() {}
-	Move(bool lyhytLinna, bool pitkaLinna); // Poikkeussiirto linnoitusta varten
-	Tile getAlkuruutu();
-	Tile getLoppuruutu();
-	bool onkoLyhytLinna();
-	bool onkoPitkälinna();
+	Move(bool shortRook, bool longRook); // Castling
+	Tile getOrigin();
+	Tile getDestination();
+	bool isShortRook();
+	bool isLongRook();
 private:
-	Tile alkuRuutu;
-	Tile loppuRuutu;
-	int miksiKorotetaan = 0;
-	bool lyhytLinna;
-	bool pitkalinna;
+	Tile _origin;
+	Tile _destination;
+	int _upgradeTo = 0;
+	bool _shortRook;
+	bool _longRook;
 };

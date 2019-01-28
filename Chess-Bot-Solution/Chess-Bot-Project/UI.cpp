@@ -47,3 +47,31 @@ void UI::drawBoard()
 
 	std::wcout << "  a  b  c  d  e  f  g  h";
 }
+
+Move UI::getOpponentMove() {
+
+	std::cout << "Move: " << std::endl;
+	std::wstring inputOpponentMove;
+	std::wcin >> inputOpponentMove;
+
+	Move opponentMove;
+
+	if (inputOpponentMove == L"O-O")
+	{
+		opponentMove = Move(true, false);
+	}
+	else if (inputOpponentMove == L"O-O-O")
+	{
+		opponentMove = Move(false, true);
+	}
+	else
+	{
+		//Tile destination = Tile()
+		for (int i = 0; i < inputOpponentMove.length; i++)
+		{
+
+		}
+	}
+
+	return opponentMove;
+}
