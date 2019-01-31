@@ -53,8 +53,63 @@ void Position::updatePostion(Move* move)
 	int originRow = tileOrigin.getRow();
 	int originColumn = tileOrigin.getColumn();
 
+	int turn = getTurn();
+
+	if (turn)
+	{
+		
+		setTurn(0);
+	}
+	else
+	{
+
+		setTurn(1);
+	}
+
+	
+
 	board[destinationColumn][destinationRow] = board[originColumn][originRow];
 	board[originColumn][originRow] = 0;
+}
+
+int Position::getTurn()
+{
+	return _turn;
+}
+
+void Position::setTurn(int color)
+{
+	_turn = color;
+}
+
+bool Position::getWhiteKingMoved()
+{
+	return _hasWhiteKingMoved;
+}
+
+bool Position::getBlackKingMoved()
+{
+	return _hasBlackKingMoved;
+}
+
+bool Position::getWhiteQueenRookMoved()
+{
+	return _hasWhiteQueenRookMoved;
+}
+
+bool Position::getWhiteKingRookMoved()
+{
+	return _hasWhiteKingRookMoved;
+}
+
+bool Position::getBlackQueenRookMoved()
+{
+	return _hasBlackQueenRookMoved;
+}
+
+bool Position::getBlackKingRookMoved()
+{
+	return _hasBlackKingRookMoved;
 }
 
 //

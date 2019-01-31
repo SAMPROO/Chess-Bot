@@ -8,25 +8,25 @@ public:
 	//Constructor sets the starting position on the board
 	Position();
 	ChessPiece * board[8][8];
-
 	void updatePostion(Move* move);
-	int getSiirtovuoro();
-	void setSiirtovuoro(int vari);
-	bool getOnkoValkeaKuningasLiikkunut();
-	bool getOnkoMustaKuningasLiikkunut();
-	bool getOnkoValkeaDTliikkunut();
-	bool getOnkoValkeaKTliikkunut();
-	bool getOnkoMustaDTliikkunut();
-	bool getOnkoMustaKTliikkunut();
+	int getTurn();
+	void setTurn(int color);
+
+	bool getWhiteKingMoved();
+	bool getBlackKingMoved();
+	bool getWhiteQueenRookMoved();
+	bool getWhiteKingRookMoved();
+	bool getBlackQueenRookMoved();
+	bool getBlackKingRookMoved();
 
 
 private:
-	int siirtovuoro;
-	bool onkoValkeaKuningasLiikkunut;
-	bool onkoMustaKuningasLiikkunut;
-	bool onkoValkeaDTliikkunut;
-	bool onkoValkeaKTliikkunut;
-	bool onkoMustaDTliikkunut;
-	bool onkoMustaKTliikkunut;
+	int _turn;
+	bool _hasWhiteKingMoved;
+	bool _hasBlackKingMoved;
+	bool _hasWhiteQueenRookMoved;
+	bool _hasWhiteKingRookMoved;
+	bool _hasBlackQueenRookMoved;
+	bool _hasBlackKingRookMoved;
 
 };
