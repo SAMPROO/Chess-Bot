@@ -42,6 +42,21 @@ Position::Position() {
 	board[7][7] = new ChessPiece(L"\u265C", 1, BR);
 }
 
+void Position::updatePostion(Move* move)
+{
+	Tile tileOrigin = move->getOrigin();
+	Tile tileDestination = move->getDestination();
+
+	int destinationRow = tileDestination.getRow();
+	int destinationColumn = tileDestination.getColumn();
+
+	int originRow = tileOrigin.getRow();
+	int originColumn = tileOrigin.getColumn();
+
+	board[destinationColumn][destinationRow] = board[originColumn][originRow];
+	board[originColumn][originRow] = 0;
+}
+
 //
 //VK, L"\u2654	
 //VD, L"\u2655	
