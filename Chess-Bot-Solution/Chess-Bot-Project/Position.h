@@ -21,12 +21,12 @@ public:
 
 
 private:
-	int _turn;
-	bool _hasWhiteKingMoved;
-	bool _hasBlackKingMoved;
-	bool _hasWhiteQueenRookMoved;
-	bool _hasWhiteKingRookMoved;
-	bool _hasBlackQueenRookMoved;
-	bool _hasBlackKingRookMoved;
+	int _turn = 0;
+	bool _hasWhiteKingMoved = 0;
+	bool _hasBlackKingMoved = 0;
+	bool _hasWhiteQueenRookMoved = 0;
+	bool _hasWhiteKingRookMoved = 0;
+	bool _hasBlackQueenRookMoved = 0;
+	bool _hasBlackKingRookMoved = 0;
 
 };

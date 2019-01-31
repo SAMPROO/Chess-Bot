@@ -77,7 +77,8 @@ Move UI::getOpponentMove() {
 
 		if (inputOpponentMove.length() == 6)
 		{
-			i++; // T/R/L/D/K 
+			//char value = inputOpponentMove[i]; // T/R/L/D/K 
+			i++; 
 		}
 		
 		Tile tiles[2];

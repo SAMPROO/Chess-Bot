@@ -57,16 +57,44 @@ void Position::updatePostion(Move* move)
 
 	if (turn)
 	{
-		
+		switch (board[originColumn][originRow]->getCode())
+		{
+		case BR:
+			if (originColumn)
+			{
+				_hasBlackQueenRookMoved = true;
+			}
+			else
+			{
+				_hasBlackKingRookMoved = true;
+			}
+			break;
+		case BK:
+			_hasBlackKingMoved = true;
+			break;
+		}
 		setTurn(0);
 	}
 	else
 	{
-
+		switch (board[originColumn][originRow]->getCode())
+		{
+		case WR:
+			if (originColumn)
+			{
+				_hasWhiteQueenRookMoved = true;
+			}
+			else
+			{
+				_hasWhiteKingRookMoved = true;
+			}
+			break;
+		case WK:
+			_hasWhiteKingMoved = true;
+			break;
+		}
 		setTurn(1);
-	}
-
-	
+	}	
 
 	board[destinationColumn][destinationRow] = board[originColumn][originRow];
 	board[originColumn][originRow] = 0;
