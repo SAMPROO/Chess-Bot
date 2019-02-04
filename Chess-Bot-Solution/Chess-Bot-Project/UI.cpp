@@ -50,11 +50,6 @@ void UI::drawBoard()
 	std::wcout << "  a  b  c  d  e  f  g  h";
 }
 
-enum abc
-{
-	a,b,c,d,e,f,g,h
-};
-
 Move UI::getOpponentMove() {
 
 	std::wcout << L"\n\nMove: ";
