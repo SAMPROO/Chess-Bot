@@ -82,8 +82,8 @@ Move UI::getOpponentMove() {
 		{
 			char column = inputOpponentMove[i]; // abc..
 			char row = inputOpponentMove[i + 1]; // 123..
-			int columnInt = column - '0' - 49;
-			int rowInt = row - '0' - 1;
+			int columnInt = column - 'a';
+			int rowInt = row - '1';
 
 			tiles[j] = Tile(rowInt, columnInt);
 		}

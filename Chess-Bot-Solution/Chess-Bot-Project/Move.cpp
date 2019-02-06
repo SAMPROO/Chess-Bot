@@ -3,6 +3,8 @@
 Move::Move(Tile origin, Tile destination) {
 	_origin = origin;
 	_destination = destination;
+	_shortRook = false;
+	_longRook = false;
 }
 
 Move::Move(bool shortRook, bool longRook) {
