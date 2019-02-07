@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <list>
 
 // constants for chess pieces
 enum
@@ -24,6 +25,13 @@ public:
 	std::wstring getUnicode();
 	void setColor(int);
 	int getColor();
+
+	virtual void getMoves(
+		std::list<Move>& list,
+		Tile* tile,
+		Position* position,
+		int color
+	) = 0;
 };
 
 
