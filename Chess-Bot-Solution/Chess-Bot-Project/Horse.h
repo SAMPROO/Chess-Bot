@@ -2,7 +2,7 @@
 
 #include "ChessPiece.h"
 
-class Horse : virtual public ChessPiece
+class Horse : public ChessPiece
 {
 	//Horse possible moves
 	int moves[8][2] = {

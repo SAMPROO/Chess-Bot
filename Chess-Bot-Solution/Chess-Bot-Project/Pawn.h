@@ -2,7 +2,7 @@
 
 #include "ChessPiece.h"
 
-class Pawn : virtual public ChessPiece
+class Pawn : public ChessPiece
 {
 	bool hasNotMoved = true;
 
