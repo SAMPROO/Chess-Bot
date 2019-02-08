@@ -2,6 +2,7 @@
 
 #include <string>
 #include <list>
+#include "Position.h"
 
 // constants for chess pieces
 enum
