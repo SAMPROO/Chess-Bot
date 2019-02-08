@@ -97,7 +97,7 @@ class Rook : virtual public ChessPiece
 			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
-				//Add new location to move list
+				//Add new location to move list	
 				list.push_back(Move(origin, Tile(i, column)));
 			}
 

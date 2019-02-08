@@ -1,19 +1,19 @@
 #pragma once
 
-#include "ChessPiece.h"
+#include "Position.h"
 
-class Horse : virtual public ChessPiece
+class King : public ChessPiece
 {
-	//Horse possible moves
+	//King possible moves
 	int moves[8][2] = {
-		{ -2, -1 },
-		{ -2, +1 },
-		{ +2, -1 },
-		{ +2, +1 },
-		{ -1, -2 },
-		{ -1, +2 },
-		{ +1, -2 },
-		{ +1, +2 } 
+		{ -1, -1 },
+		{ -1, +1 },
+		{ -1, 0 },
+		{ 1, -1 },
+		{ 1, +1 },
+		{ 1, 0 },
+		{ 0, +1},
+		{ 0, -1} 
 	};
 
 	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
@@ -57,6 +57,6 @@ class Horse : virtual public ChessPiece
 		}
 
 
-		
+
 	}
 };
