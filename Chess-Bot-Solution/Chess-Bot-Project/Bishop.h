@@ -24,12 +24,14 @@ class Bishop : virtual public ChessPiece
 
 			ChessPiece* n = position->board[new_row][new_column];
 
+			//Is new location empty?
 			if (n == nullptr)
 			{
 				list.push_back(Move(origin, Tile(new_row, new_column)));
 				continue;
 			}
 
+			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
 				list.push_back(Move(origin, Tile(new_row, new_column)));
@@ -49,12 +51,14 @@ class Bishop : virtual public ChessPiece
 
 			ChessPiece* n = position->board[new_row][new_column];
 
+			//Is new location empty?
 			if (n == nullptr)
 			{
 				list.push_back(Move(origin, Tile(new_row, new_column)));
 				continue;
 			}
 
+			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
 				list.push_back(Move(origin, Tile(new_row, new_column)));
@@ -74,12 +78,14 @@ class Bishop : virtual public ChessPiece
 
 			ChessPiece* n = position->board[new_row][new_column];
 
+			//Is new location empty?
 			if (n == nullptr)
 			{
 				list.push_back(Move(origin, Tile(new_row, new_column)));
 				continue;
 			}
 
+			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
 				list.push_back(Move(origin, Tile(new_row, new_column)));
@@ -99,12 +105,14 @@ class Bishop : virtual public ChessPiece
 
 			ChessPiece* n = position->board[new_row][new_column];
 
+			//Is new location empty?
 			if (n == nullptr)
 			{
 				list.push_back(Move(origin, Tile(new_row, new_column)));
 				continue;
 			}
 
+			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
 				list.push_back(Move(origin, Tile(new_row, new_column)));

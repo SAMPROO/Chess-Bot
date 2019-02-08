@@ -8,6 +8,7 @@ class Rook : virtual public ChessPiece
 {
 	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
 	{
+		//Current location
 		int row = tile->getRow();
 		int column = tile->getColumn();
 
@@ -18,14 +19,18 @@ class Rook : virtual public ChessPiece
 		{
 			ChessPiece* n = position->board[row][i];
 			
+			//Is new location empty?
 			if (n == nullptr)
 			{
+				//Add new location to move list
 				list.push_back(Move(origin, Tile(row, i)));
 				continue;
 			}
 
+			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
+				//Add new location to move list
 				list.push_back(Move(origin, Tile(row, i)));
 			}
 
@@ -37,14 +42,18 @@ class Rook : virtual public ChessPiece
 		{
 			ChessPiece* n = position->board[row][i];
 
+			//Is new location empty?
 			if (n == nullptr)
 			{
+				//Add new location to move list
 				list.push_back(Move(origin, Tile(row, i)));
 				continue;
 			}
 
+			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
+				//Add new location to move list
 				list.push_back(Move(origin, Tile(row, i)));
 			}
 
@@ -56,14 +65,18 @@ class Rook : virtual public ChessPiece
 		{
 			ChessPiece* n = position->board[i][column];
 
+			//Is new location empty?
 			if (n == nullptr)
 			{
+				//Add new location to move list
 				list.push_back(Move(origin, Tile(i, column)));
 				continue;
 			}
 
+			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
+				//Add new location to move list
 				list.push_back(Move(origin, Tile(i, column)));
 			}
 
@@ -75,14 +88,18 @@ class Rook : virtual public ChessPiece
 		{
 			ChessPiece* n = position->board[i][column];
 
+			//Is new location empty?
 			if (n == nullptr)
 			{
+				//Add new location to move list
 				list.push_back(Move(origin, Tile(i, column)));
 				continue;
 			}
 
+			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
+				//Add new location to move list
 				list.push_back(Move(origin, Tile(i, column)));
 			}
 
