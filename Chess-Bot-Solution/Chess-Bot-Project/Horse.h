@@ -1,10 +1,8 @@
 #pragma once
 
-#include <list>
 #include "ChessPiece.h"
-#include "Position.h"
 
-class Horse : public ChessPiece
+class Horse : virtual public ChessPiece
 {
 	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
 	{

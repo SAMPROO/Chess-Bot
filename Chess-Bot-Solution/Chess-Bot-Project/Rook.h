@@ -1,8 +1,6 @@
 #pragma once
 
-#include <list>
 #include "ChessPiece.h"
-#include "Position.h"
 
 class Rook : virtual public ChessPiece
 {

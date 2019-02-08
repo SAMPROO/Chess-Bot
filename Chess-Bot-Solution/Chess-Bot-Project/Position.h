@@ -19,6 +19,7 @@ public:
 	bool getBlackQueenRookMoved();
 	bool getBlackKingRookMoved();
 
+	void getLegalMoves(std::list<Move>& list);
 
 private:
 	int _turn = 0;

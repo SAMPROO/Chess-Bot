@@ -167,9 +167,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bishop.h" />
     <ClInclude Include="ChessPiece.h" />
+    <ClInclude Include="Horse.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="Position.h" />
+    <ClInclude Include="Queen.h" />
     <ClInclude Include="Rook.h" />
     <ClInclude Include="Tile.h" />
     <ClInclude Include="UI.h" />

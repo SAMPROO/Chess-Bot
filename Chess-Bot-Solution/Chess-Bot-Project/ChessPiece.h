@@ -2,6 +2,7 @@
 
 #include <string>
 #include <list>
+#include "Position.h"
 
 // constants for chess pieces
 enum
@@ -18,7 +19,6 @@ private:
 	int _code; // enum
 public:
 	ChessPiece(std::wstring, int, int);
-	ChessPiece() {};
 	void setCode(int);
 	int getCode();
 	void setUnicode(std::wstring);

@@ -140,6 +140,20 @@ bool Position::getBlackKingRookMoved()
 	return _hasBlackKingRookMoved;
 }
 
+void Position::getLegalMoves(std::list<Move>& list)
+{
+	for (int i = 0; i < 7; i++)
+	{
+		for (int j = 0; j < 7; j++)
+		{
+			if (board[i][j]->getColor() == _turn)
+			{
+				board[i][j]->getMoves(list, new Tile(j, i), this, _turn);
+			}
+		}
+	}
+}
+
 //
 //VK, L"\u2654	
 //VD, L"\u2655	

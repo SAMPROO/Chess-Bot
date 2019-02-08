@@ -2,7 +2,7 @@
 
 class Tile {
 public:
-	Tile(int, int);
+	Tile(int row, int column);
 	Tile() {}
 	int getRow();
 	int getColumn();
