@@ -44,60 +44,78 @@ Position::Position() {
 
 void Position::updatePostion(Move* move)
 {
-	Tile tileOrigin = move->getOrigin();
-	Tile tileDestination = move->getDestination();
+	int end = _turn ? 7 : 0;
 
-	int destinationRow = tileDestination.getRow();
-	int destinationColumn = tileDestination.getColumn();
-
-	int originRow = tileOrigin.getRow();
-	int originColumn = tileOrigin.getColumn();
-
-	int turn = getTurn();
-
-	if (turn)
-	{
-		switch (board[originColumn][originRow]->getCode())
-		{
-		case BR:
-			if (originColumn)
-			{
-				_hasBlackQueenRookMoved = true;
-			}
-			else
-			{
-				_hasBlackKingRookMoved = true;
-			}
-			break;
-		case BK:
-			_hasBlackKingMoved = true;
-			break;
-		}
-		setTurn(0);
+	// Short Rook
+	if (move->isShortRook) {
+		board[6][end] = board[4][end]; // King to new position
+		board[4][end] = 0; // Clear old position
+		board[5][end] = board[7][end]; // Rook to new position
+		board[7][end] = 0; // Clear old position
 	}
-	else
+	// Long Rook
+	else if (move->isLongRook) {
+		board[2][end] = board[4][end]; // King to new position
+		board[4][end] = 0; // Clear old position
+		board[3][end] = board[0][end]; // Rook to new position
+		board[0][end] = 0; // Clear old position
+	}
+	// Normal move
+	else 
 	{
-		switch (board[originColumn][originRow]->getCode())
-		{
-		case WR:
-			if (originColumn)
-			{
-				_hasWhiteQueenRookMoved = true;
-			}
-			else
-			{
-				_hasWhiteKingRookMoved = true;
-			}
-			break;
-		case WK:
-			_hasWhiteKingMoved = true;
-			break;
-		}
-		setTurn(1);
-	}	
+		Tile tileOrigin = move->getOrigin();
+		Tile tileDestination = move->getDestination();
 
-	board[destinationColumn][destinationRow] = board[originColumn][originRow];
-	board[originColumn][originRow] = 0;
+		int destinationRow = tileDestination.getRow();
+		int destinationColumn = tileDestination.getColumn();
+
+		int originRow = tileOrigin.getRow();
+		int originColumn = tileOrigin.getColumn();
+
+		if (_turn)
+		{
+			switch (board[originColumn][originRow]->getCode())
+			{
+			case BR:
+				if (originColumn)
+				{
+					_hasBlackQueenRookMoved = true;
+				}
+				else
+				{
+					_hasBlackKingRookMoved = true;
+				}
+				break;
+			case BK:
+				_hasBlackKingMoved = true;
+				break;
+			}
+			setTurn(0);
+		}
+		else
+		{
+			switch (board[originColumn][originRow]->getCode())
+			{
+			case WR:
+				if (originColumn)
+				{
+					_hasWhiteQueenRookMoved = true;
+				}
+				else
+				{
+					_hasWhiteKingRookMoved = true;
+				}
+				break;
+			case WK:
+				_hasWhiteKingMoved = true;
+				break;
+			}
+			setTurn(1);
+		}
+
+		board[destinationColumn][destinationRow] = board[originColumn][originRow];
+		board[originColumn][originRow] = 0;
+	}
 }
 
 int Position::getTurn()
