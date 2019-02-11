@@ -2,7 +2,10 @@
 
 #include <string>
 #include <list>
-#include "Position.h"
+#include "Move.h"
+// #include "Position.h"
+
+class Position;
 
 // constants for chess pieces
 enum
@@ -15,7 +18,7 @@ class ChessPiece {
 
 private:
 	std::wstring _unicode;
-	int _color; // white = 0, black = 1
+	int _color = 0; // white = 0, black = 1
 	int _code; // enum
 public:
 	ChessPiece(std::wstring, int, int);
@@ -33,5 +36,6 @@ public:
 		int color
 	) = 0;
 };
+
 
 

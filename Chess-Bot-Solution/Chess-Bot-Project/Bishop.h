@@ -4,6 +4,10 @@
 
 class Bishop : virtual public ChessPiece
 {
+public:
+
+	Bishop(std::wstring unicode, int color, int code) : ChessPiece(unicode, color, code) {}
+
 	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
 	{
 		int row = tile->getRow();
@@ -30,7 +34,7 @@ class Bishop : virtual public ChessPiece
 			}
 
 			// Is location occupied by opponent?
-			if (n->getColor() != color)
+			else if (n->getColor() != color)
 			{
 				list.push_back(Move(origin, Tile(new_row, new_column)));
 			}

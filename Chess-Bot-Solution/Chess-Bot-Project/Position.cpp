@@ -1,20 +1,30 @@
 #include "Position.h"
+#include "Rook.h"
+#include "Horse.h"
+#include "Bishop.h"
+#include "King.h"
+#include "Queen.h"
+#include "Pawn.h"
+
 
 Position::Position() {
 
 	// Initialization of white pieces 
-	board[0][0] = new ChessPiece(L"\u2656", 0, WR);
-	board[1][0] = new ChessPiece(L"\u2658", 0, WH);
-	board[2][0] = new ChessPiece(L"\u2657", 0, WB);
-	board[3][0] = new ChessPiece(L"\u2654", 0, WK);
-	board[4][0] = new ChessPiece(L"\u2655", 0, WQ);
-	board[5][0] = new ChessPiece(L"\u2657", 0, WB);
-	board[6][0] = new ChessPiece(L"\u2658", 0, WH);
-	board[7][0] = new ChessPiece(L"\u2656", 0, WR);
+	board[0][0] = new Rook(L"\u2656", 0, WR);
+	board[1][0] = new Horse(L"\u2658", 0, WH);
+	board[2][0] = new Bishop(L"\u2657", 0, WB);
+	board[3][0] = new King(L"\u2654", 0, WK);
+	board[4][0] = new Queen(L"\u2655", 0, WQ);
+	board[5][0] = new Bishop(L"\u2657", 0, WB);
+	board[6][0] = new Horse(L"\u2658", 0, WH);
+	board[7][0] = new Rook(L"\u2656", 0, WR);
 
+	//Initialize pawns
 	for (int i = 0; i < 8; i++)
 	{
-		board[i][1] = new ChessPiece(L"\u2659", 0, WP);
+		board[i][1] = new Pawn(L"\u2659", 0, WP);
+		board[i][6] = new Pawn(L"\u265F", 1, BP);
+
 	}
 
 	// Initialization of empty positions 
@@ -26,20 +36,14 @@ Position::Position() {
 		}
 	}
 
-	// Initialization of black pieces 
-	for (int i = 0; i < 8; i++)
-	{
-		board[i][6] = new ChessPiece(L"\u265F", 1, BP);
-	}
-
-	board[0][7] = new ChessPiece(L"\u265C", 1, BR);
-	board[1][7] = new ChessPiece(L"\u265E", 1, BH);
-	board[2][7] = new ChessPiece(L"\u265D", 1, BB);
-	board[3][7] = new ChessPiece(L"\u265A", 1, BK);
-	board[4][7] = new ChessPiece(L"\u265B", 1, BQ);
-	board[5][7] = new ChessPiece(L"\u265D", 1, BB);
-	board[6][7] = new ChessPiece(L"\u265E", 1, BH);
-	board[7][7] = new ChessPiece(L"\u265C", 1, BR);
+	board[0][7] = new Rook(L"\u265C", 1, BR);
+	board[1][7] = new Horse(L"\u265E", 1, BH);
+	board[2][7] = new Bishop(L"\u265D", 1, BB);
+	board[3][7] = new King(L"\u265A", 1, BK);
+	board[4][7] = new Queen(L"\u265B", 1, BQ);
+	board[5][7] = new Bishop(L"\u265D", 1, BB);
+	board[6][7] = new Horse(L"\u265E", 1, BH);
+	board[7][7] = new Rook(L"\u265C", 1, BR);
 }
 
 void Position::updatePostion(Move* move)
@@ -47,14 +51,14 @@ void Position::updatePostion(Move* move)
 	int end = _turn ? 7 : 0;
 
 	// Short Rook
-	if (move->isShortRook) {
+	if (move->isShortRook()) {
 		board[6][end] = board[4][end]; // King to new position
 		board[4][end] = 0; // Clear old position
 		board[5][end] = board[7][end]; // Rook to new position
 		board[7][end] = 0; // Clear old position
 	}
 	// Long Rook
-	else if (move->isLongRook) {
+	else if (move->isLongRook()) {
 		board[2][end] = board[4][end]; // King to new position
 		board[4][end] = 0; // Clear old position
 		board[3][end] = board[0][end]; // Rook to new position
@@ -164,10 +168,22 @@ void Position::getLegalMoves(std::list<Move>& list)
 	{
 		for (int j = 0; j < 7; j++)
 		{
-			if (board[i][j]->getColor() == _turn)
+			ChessPiece * chessPiece = board[j][i];
+
+			if (chessPiece != NULL && chessPiece->getColor() == _turn)
 			{
-				board[i][j]->getMoves(list, new Tile(j, i), this, _turn);
+				chessPiece->getMoves(list, new Tile(i, j), this, _turn);
 			}
 		}
+	}
+}
+
+void Position::getLegalMovesFromOrigin(std::list<Move>& list, Tile origin)
+{
+	ChessPiece * chessPiece = board[origin.getRow()][origin.getColumn()];
+
+	if (chessPiece != NULL && chessPiece->getColor() == _turn)
+	{
+		chessPiece->getMoves(list, &origin, this, _turn);
 	}
 }

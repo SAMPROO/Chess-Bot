@@ -4,6 +4,10 @@
 
 class Horse : public ChessPiece
 {
+public:
+
+	Horse(std::wstring unicode, int color, int code) : ChessPiece(unicode, color, code) {}
+
 	//Horse possible moves
 	int moves[8][2] = {
 		{ -2, -1 },
@@ -32,7 +36,7 @@ class Horse : public ChessPiece
 			//If new move out of bounds then break
 			if (new_row > 7 || new_row < 0 || new_column > 7 || new_column < 0)
 			{
-				break;
+				continue;
 			}
 
 			ChessPiece* n = position->board[new_row][new_column];
@@ -46,14 +50,11 @@ class Horse : public ChessPiece
 			}
 
 			// Is location occupied by opponent?
-			if (n->getColor() != color)
+			else if (n->getColor() != color)
 			{
 				//Add new location to move list
 				list.push_back(Move(Tile(row, column), Tile(new_row, new_column)));
 			}
-
-			break;
-
 		}
 
 

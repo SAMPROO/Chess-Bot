@@ -20,6 +20,7 @@ public:
 	bool getBlackKingRookMoved();
 
 	void getLegalMoves(std::list<Move>& list);
+	void getLegalMovesFromOrigin(std::list<Move>& list, Tile origin);
 
 private:
 	int _turn = 0;

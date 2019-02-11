@@ -7,6 +7,7 @@ public:
 	Move(Tile, Tile);
 	Move() {}
 	Move(bool shortRook, bool longRook); // Castling
+	bool operator ==(const Move& rhs) const;
 	Tile getOrigin();
 	Tile getDestination();
 	bool isShortRook();
@@ -15,6 +16,6 @@ private:
 	Tile _origin;
 	Tile _destination;
 	int _upgradeTo = 0;
-	bool _shortRook;
-	bool _longRook;
+	bool _shortRook = false;
+	bool _longRook = false;
 };

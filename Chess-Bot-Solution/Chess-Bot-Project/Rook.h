@@ -4,6 +4,10 @@
 
 class Rook : virtual public ChessPiece
 {
+public:
+
+	Rook(std::wstring unicode, int color, int code) : ChessPiece(unicode, color, code) {}
+
 	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
 	{
 		//Current location
@@ -26,7 +30,7 @@ class Rook : virtual public ChessPiece
 			}
 
 			// Is location occupied by opponent?
-			if (n->getColor() != color)
+			else if (n->getColor() != color)
 			{
 				//Add new location to move list
 				list.push_back(Move(origin, Tile(row, i)));

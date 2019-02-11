@@ -4,6 +4,11 @@
 
 class King : public ChessPiece
 {
+
+public:
+
+	King(std::wstring unicode, int color, int code) : ChessPiece(unicode, color, code) {}
+
 	//King possible moves
 	int moves[8][2] = {
 		{ -1, -1 },

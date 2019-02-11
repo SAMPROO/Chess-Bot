@@ -27,5 +27,6 @@ void ChessPiece::setColor(int color) {
 }
 
 int ChessPiece::getColor() {
+
 	return _color;
 }
