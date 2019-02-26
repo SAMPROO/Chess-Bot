@@ -76,48 +76,53 @@ void Position::updatePostion(Move* move)
 		int originRow = tileOrigin.getRow();
 		int originColumn = tileOrigin.getColumn();
 
-		if (_turn)
+		ChessPiece * chessPiece = board[originColumn][originRow];
+
+		if (chessPiece != NULL)
 		{
-			switch (board[originColumn][originRow]->getCode())
+			if (_turn)
 			{
-			case BR:
-				if (originColumn)
+				switch (chessPiece->getCode())
 				{
-					_hasBlackQueenRookMoved = true;
+				case BR:
+					if (originColumn)
+					{
+						_hasBlackQueenRookMoved = true;
+					}
+					else
+					{
+						_hasBlackKingRookMoved = true;
+					}
+					break;
+				case BK:
+					_hasBlackKingMoved = true;
+					break;
 				}
-				else
-				{
-					_hasBlackKingRookMoved = true;
-				}
-				break;
-			case BK:
-				_hasBlackKingMoved = true;
-				break;
+				setTurn(0);
 			}
-			setTurn(0);
-		}
-		else
-		{
-			switch (board[originColumn][originRow]->getCode())
+			else
 			{
-			case WR:
-				if (originColumn)
+				switch (chessPiece->getCode())
 				{
-					_hasWhiteQueenRookMoved = true;
+				case WR:
+					if (originColumn)
+					{
+						_hasWhiteQueenRookMoved = true;
+					}
+					else
+					{
+						_hasWhiteKingRookMoved = true;
+					}
+					break;
+				case WK:
+					_hasWhiteKingMoved = true;
+					break;
 				}
-				else
-				{
-					_hasWhiteKingRookMoved = true;
-				}
-				break;
-			case WK:
-				_hasWhiteKingMoved = true;
-				break;
+				setTurn(1);
 			}
-			setTurn(1);
 		}
 
-		board[destinationColumn][destinationRow] = board[originColumn][originRow];
+		board[destinationColumn][destinationRow] = chessPiece;
 		board[originColumn][originRow] = 0;
 	}
 }
@@ -162,17 +167,41 @@ bool Position::getBlackKingRookMoved()
 	return _hasBlackKingRookMoved;
 }
 
-void Position::getLegalMoves(std::list<Move>& list)
+void Position::getLegalMoves(std::list<Move>& moves)
 {
-	for (int i = 0; i < 7; i++)
+	getRawMoves(moves);
+
+	Tile king = findKing(_turn);
+
+	for (Move move : moves)
 	{
-		for (int j = 0; j < 7; j++)
+		Position newPosition = *this;
+
+		newPosition.updatePostion(&move);
+
+		std::list<Move> * newMoves = new std::list<Move>();
+		newPosition.getRawMoves(*newMoves);
+
+		if (newPosition.isTileThreatened(king, *newMoves))
+		{
+			moves.remove(move);
+		}
+
+		delete newMoves;
+	}
+}
+
+void Position::getRawMoves(std::list<Move>& moves)
+{
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
 		{
 			ChessPiece * chessPiece = board[j][i];
 
 			if (chessPiece != NULL && chessPiece->getColor() == _turn)
 			{
-				chessPiece->getMoves(list, new Tile(i, j), this, _turn);
+				chessPiece->getMoves(moves, &Tile(j, i), this, _turn);
 			}
 		}
 	}
@@ -186,4 +215,41 @@ void Position::getLegalMovesFromOrigin(std::list<Move>& list, Tile origin)
 	{
 		chessPiece->getMoves(list, &origin, this, _turn);
 	}
+}
+
+Tile Position::findKing(int color)
+{
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			ChessPiece * chessPiece = board[j][i];
+
+			if (chessPiece != NULL && (chessPiece->getCode() == WK || chessPiece->getCode() == BK) && chessPiece->getColor() == _turn)
+			{
+				return Tile(j, i);
+			}
+		}
+	}
+}
+
+bool Position::isTileThreatened(Tile tile, std::list<Move>& moves)
+{
+	for (Move move : moves)
+	{
+		Tile origin = move.getOrigin();
+		ChessPiece * chessPiece = board[origin.getColumn()][origin.getRow()];
+
+		if (chessPiece != NULL && chessPiece->getColor() != _turn && move.getDestination() == tile)
+		{
+			if (chessPiece->getCode() == WP || chessPiece->getCode() == BP)
+			{
+				return origin.getColumn() != tile.getColumn();
+			}
+
+			return true;
+		}
+	}
+
+	return false;
 }

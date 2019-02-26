@@ -17,7 +17,7 @@ public:
 		Tile origin = Tile(row, column);
 
 		// Right
-		for (int i = column + 1; i < 7; i++)
+		for (int i = column + 1; i < 8; i++)
 		{
 			ChessPiece* n = position->board[row][i];
 			
@@ -63,7 +63,7 @@ public:
 		}
 
 		// Up
-		for (int i = row + 1; i < 7; i++)
+		for (int i = row + 1; i < 8; i++)
 		{
 			ChessPiece* n = position->board[i][column];
 

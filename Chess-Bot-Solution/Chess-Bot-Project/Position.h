@@ -20,7 +20,11 @@ public:
 	bool getBlackKingRookMoved();
 
 	void getLegalMoves(std::list<Move>& list);
+	void getRawMoves(std::list<Move>& list);
 	void getLegalMovesFromOrigin(std::list<Move>& list, Tile origin);
+
+	Tile findKing(int color);
+	bool isTileThreatened(Tile tile, std::list<Move>& moves);
 
 private:
 	int _turn = 0;

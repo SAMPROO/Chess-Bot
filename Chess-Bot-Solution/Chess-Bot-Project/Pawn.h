@@ -8,8 +8,6 @@ public:
 
 	Pawn(std::wstring unicode, int color, int code) : ChessPiece(unicode, color, code) {}
 
-	bool hasNotMoved = true;
-
 	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
 	{
 		//Current location
@@ -54,12 +52,9 @@ public:
 		}
 
 		// 3. forward +2
-		if (hasNotMoved)
+		if (row == color ? 6 : 1)
 		{
 			new_row += delta;
-
-			if (color ? new_row < 0 : new_row > 7)
-				return;
 
 			//Is new location empty?
 			if (position->board[new_row][column] == nullptr)

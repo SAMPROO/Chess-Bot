@@ -16,7 +16,7 @@ public:
 		Tile origin = Tile(row, column);
 
 		// Up Right
-		for (int i = 1; i < 7; i++)
+		for (int i = 1; i < 8; i++)
 		{
 			int new_row = row + i;
 			int new_column = column + i;
@@ -43,7 +43,7 @@ public:
 		}
 
 		// Up Left
-		for (int i = 1; i < 7; i++)
+		for (int i = 1; i < 8; i++)
 		{
 			int new_row = row + i;
 			int new_column = column - i;
@@ -70,7 +70,7 @@ public:
 		}
 
 		// Down Right
-		for (int i = 1; i < 7; i++)
+		for (int i = 1; i < 8; i++)
 		{
 			int new_row = row - i;
 			int new_column = column + i;
@@ -97,7 +97,7 @@ public:
 		}
 
 		// Down Left
-		for (int i = 1; i < 7; i++)
+		for (int i = 1; i < 8; i++)
 		{
 			int new_row = row - i;
 			int new_column = column - i;

@@ -27,13 +27,13 @@ public:
 		int column = tile->getColumn();
 
 		//Loop through moves
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 8; i++)
 		{
 			//Possible new location
 			int new_row = row + moves[i][0];
 			int new_column = column + moves[i][1];
 
-			//If new move out of bounds then break
+			//If new move out of bounds then continue
 			if (new_row > 7 || new_row < 0 || new_column > 7 || new_column < 0)
 			{
 				continue;
@@ -46,7 +46,6 @@ public:
 			{
 				//Add new location to move list
 				list.push_back(Move(Tile(row, column), Tile(new_row, new_column)));
-				continue;
 			}
 
 			// Is location occupied by opponent?
@@ -56,8 +55,5 @@ public:
 				list.push_back(Move(Tile(row, column), Tile(new_row, new_column)));
 			}
 		}
-
-
-		
 	}
 };

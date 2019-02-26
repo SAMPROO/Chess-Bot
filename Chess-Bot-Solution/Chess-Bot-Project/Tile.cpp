@@ -16,6 +16,17 @@ bool Tile::operator!=(const Tile & rhs) const
 	return true;
 }
 
+bool Tile::operator==(const Tile & rhs) const
+{
+	if (_column != rhs._column)
+		return false;
+
+	if (_row != rhs._row)
+		return false;
+
+	return true;
+}
+
 int Tile::getRow() {
 	return _row;
 }

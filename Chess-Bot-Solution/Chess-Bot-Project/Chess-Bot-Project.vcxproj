@@ -170,6 +170,7 @@
     <ClInclude Include="Bishop.h" />
     <ClInclude Include="ChessPiece.h" />
     <ClInclude Include="Horse.h" />
+    <ClInclude Include="King.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Position.h" />
