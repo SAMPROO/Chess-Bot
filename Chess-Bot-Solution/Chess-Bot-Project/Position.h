@@ -16,20 +16,26 @@ public:
 	int getTurn();
 	void setTurn(int color);
 
-	bool getWhiteKingMoved();
-	bool getBlackKingMoved();
-	bool getWhiteQueenRookMoved();
-	bool getWhiteKingRookMoved();
-	bool getBlackQueenRookMoved();
-	bool getBlackKingRookMoved();
+	bool getKingMoved(int color);
+	bool getShortRookMoved(int color);
+	bool getLongRookMoved(int color);
+
+	//bool getWhiteKingMoved();
+	//bool getBlackKingMoved();
+	//bool getWhiteQueenRookMoved();
+	//bool getWhiteKingRookMoved();
+	//bool getBlackQueenRookMoved();
+	//bool getBlackKingRookMoved();
 
 	void getLegalMoves(std::list<Move>& list);
 	void getRawMoves(std::list<Move>& moves, int color);
-	//void getRawMoves(std::list<Move>& list);
-	void getLegalMovesFromOrigin(std::list<Move>& list, Tile origin);
+
+	void checkKingCheck(std::list<Move>& moves);
+	void addCastling(std::list<Move>& moves);
+
 
 	Tile findKing(int color);
-	bool isTileThreatened(Tile tile, std::list<Move>& moves);
+	bool isTileThreatened(Tile tile, int color);
 
 private:
 	int _turn = 0;

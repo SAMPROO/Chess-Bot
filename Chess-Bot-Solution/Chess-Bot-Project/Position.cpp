@@ -27,29 +27,31 @@ Position::Position() {
 			board[i][j] = NULL;
 
 	// Initialization of white pieces 
-	//board[0][0] = wRook;
+	board[0][0] = wRook;
 	//board[1][0] = wHorse;
 	//board[2][0] = wBishop;
-	board[3][4] = wKing;
+	board[3][0] = wKing;
 	//board[4][0] = wQueen;
 	//board[5][0] = wBishop;
 	//board[6][0] = wHorse;
-	//board[7][0] = wRook;
+	board[7][0] = wRook;
+
+	//board[4][4] = wPawn;
 
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
 	{
-		//board[i][1] = wPawn;
+		board[i][1] = wPawn;
 		board[i][6] = bPawn;
 	}
 
 	board[0][7] = bRook;
-	board[1][7] = bHorse;
-	board[2][7] = bBishop;
+	//board[1][7] = bHorse;
+	//board[2][7] = bBishop;
 	board[3][7] = bKing;
-	board[4][7] = bQueen;
-	board[5][7] = bBishop;
-	board[6][7] = bHorse;
+	//board[4][7] = bQueen;
+	//board[5][7] = bBishop;
+	//board[6][7] = bHorse;
 	board[7][7] = bRook;
 }
 
@@ -144,59 +146,56 @@ void Position::setTurn(int color)
 	_turn = color;
 }
 
-bool Position::getWhiteKingMoved()
+bool Position::getKingMoved(int color)
 {
-	return _hasWhiteKingMoved;
+	return color ? _hasWhiteKingMoved : _hasBlackKingMoved;
 }
 
-bool Position::getBlackKingMoved()
+bool Position::getShortRookMoved(int color)
 {
-	return _hasBlackKingMoved;
+	return color ? _hasWhiteKingRookMoved : _hasBlackKingRookMoved;
 }
 
-bool Position::getWhiteQueenRookMoved()
+bool Position::getLongRookMoved(int color)
 {
-	return _hasWhiteQueenRookMoved;
+	return color ? _hasWhiteQueenRookMoved : _hasBlackQueenRookMoved;
 }
 
-bool Position::getWhiteKingRookMoved()
-{
-	return _hasWhiteKingRookMoved;
-}
-
-bool Position::getBlackQueenRookMoved()
-{
-	return _hasBlackQueenRookMoved;
-}
-
-bool Position::getBlackKingRookMoved()
-{
-	return _hasBlackKingRookMoved;
-}
+//bool Position::getWhiteKingMoved()
+//{
+//	return _hasWhiteKingMoved;
+//}
+//
+//bool Position::getBlackKingMoved()
+//{
+//	return _hasBlackKingMoved;
+//}
+//
+//bool Position::getWhiteQueenRookMoved()
+//{
+//	return _hasWhiteQueenRookMoved;
+//}
+//
+//bool Position::getWhiteKingRookMoved()
+//{
+//	return _hasWhiteKingRookMoved;
+//}
+//
+//bool Position::getBlackQueenRookMoved()
+//{
+//	return _hasBlackQueenRookMoved;
+//}
+//
+//bool Position::getBlackKingRookMoved()
+//{
+//	return _hasBlackKingRookMoved;
+//}
 
 void Position::getLegalMoves(std::list<Move>& moves)
 {
 	getRawMoves(moves, _turn);
-
-	Tile king = findKing(_turn);
-
-	for (Move move : moves)
-	{
-		Position newPosition = *this;
-
-		newPosition.updatePostion(&move);
-
-		std::list<Move> * newMoves = new std::list<Move>();
-		int color = _turn ? 0 : 1;
-		newPosition.getRawMoves(*newMoves, color);
-
-		if (newPosition.isTileThreatened(king, *newMoves))
-		{
-			moves.remove(move);
-		}
-
-		delete newMoves;
-	}
+	addCastling(moves);
+	checkKingCheck(moves);
 }
 
 void Position::getRawMoves(std::list<Move>& moves, int color)
@@ -215,14 +214,27 @@ void Position::getRawMoves(std::list<Move>& moves, int color)
 	}
 }
 
-void Position::getLegalMovesFromOrigin(std::list<Move>& list, Tile origin)
+void Position::checkKingCheck(std::list<Move>& moves)
 {
-	ChessPiece * chessPiece = board[origin.getRow()][origin.getColumn()];
+	Tile king = findKing(_turn);
 
-	if (chessPiece != NULL && chessPiece->getColor() == _turn)
+	std::list<Move> safeMoves;
+
+	for (Move move : moves)
 	{
-		chessPiece->getMoves(list, &origin, this, _turn);
+		Position newPosition = *this;
+
+		newPosition.updatePostion(&move);
+
+		Tile kingTile = move.getOrigin() == king ? move.getDestination() : king;
+
+		if (newPosition.isTileThreatened(kingTile, !_turn) == false)
+		{
+			safeMoves.push_back(move);
+		}
 	}
+
+	moves = safeMoves;
 }
 
 Tile Position::findKing(int color)
@@ -241,9 +253,46 @@ Tile Position::findKing(int color)
 	}
 }
 
-bool Position::isTileThreatened(Tile tile, std::list<Move>& moves)
+void Position::addCastling(std::list<Move>& moves)
 {
-	for (Move move : moves)
+	//// Linnoituksien huomioiminen
+	//// 1. Kuningas ei saa olla liikkunut
+	//// 2. Torni ei saa olla liikkunut
+	//// 3. Kuningas ei saa olla shakattuna
+	//// 4. Ruutujen pit‰‰ olla tyhj‰t
+	//// 5. Ruudut eiv‰t saa olla uhattuja
+
+	int row = _turn ? 0 : 7;
+
+	if (getKingMoved(_turn) == false && isTileThreatened(Tile(4, row), !_turn) == false)
+	{
+		// short rook
+		if (getShortRookMoved(_turn) == false			
+			&& board[5][row] == NULL 
+			&& board[6][row] == NULL
+			&& isTileThreatened(Tile(5, row), !_turn) == false
+			&& isTileThreatened(Tile(6, row), !_turn) == false)
+
+			moves.push_back(Move(true, false));		
+
+		// long rook
+		if (getLongRookMoved(_turn) == false
+			&& board[3][row] == NULL 
+			&& board[2][row] == NULL
+			&& isTileThreatened(Tile(3, row), !_turn) == false
+			&& isTileThreatened(Tile(2, row), !_turn) == false)
+			
+			moves.push_back(Move(false, true));
+	}
+	
+}
+
+bool Position::isTileThreatened(Tile tile, int enemyColor)
+{
+	std::list<Move> enemyMoves;
+	getRawMoves(enemyMoves, enemyColor);
+
+	for (Move move : enemyMoves)
 	{
 		Tile origin = move.getOrigin();
 		ChessPiece * chessPiece = board[origin.getColumn()][origin.getRow()];
