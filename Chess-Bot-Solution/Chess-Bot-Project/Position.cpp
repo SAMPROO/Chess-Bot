@@ -27,19 +27,19 @@ Position::Position() {
 			board[i][j] = NULL;
 
 	// Initialization of white pieces 
-	board[0][0] = wRook;
-	board[1][0] = wHorse;
-	board[2][0] = wBishop;
-	board[3][0] = wKing;
-	board[4][0] = wQueen;
-	board[5][0] = wBishop;
-	board[6][0] = wHorse;
-	board[7][0] = wRook;
+	//board[0][0] = wRook;
+	//board[1][0] = wHorse;
+	//board[2][0] = wBishop;
+	board[3][4] = wKing;
+	//board[4][0] = wQueen;
+	//board[5][0] = wBishop;
+	//board[6][0] = wHorse;
+	//board[7][0] = wRook;
 
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
 	{
-		board[i][1] = wPawn;
+		//board[i][1] = wPawn;
 		board[i][6] = bPawn;
 	}
 
@@ -176,7 +176,7 @@ bool Position::getBlackKingRookMoved()
 
 void Position::getLegalMoves(std::list<Move>& moves)
 {
-	getRawMoves(moves);
+	getRawMoves(moves, _turn);
 
 	Tile king = findKing(_turn);
 
@@ -187,7 +187,8 @@ void Position::getLegalMoves(std::list<Move>& moves)
 		newPosition.updatePostion(&move);
 
 		std::list<Move> * newMoves = new std::list<Move>();
-		newPosition.getRawMoves(*newMoves);
+		int color = _turn ? 0 : 1;
+		newPosition.getRawMoves(*newMoves, color);
 
 		if (newPosition.isTileThreatened(king, *newMoves))
 		{
@@ -198,7 +199,7 @@ void Position::getLegalMoves(std::list<Move>& moves)
 	}
 }
 
-void Position::getRawMoves(std::list<Move>& moves)
+void Position::getRawMoves(std::list<Move>& moves, int color)
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -206,9 +207,9 @@ void Position::getRawMoves(std::list<Move>& moves)
 		{
 			ChessPiece * chessPiece = board[j][i];
 
-			if (chessPiece != NULL && chessPiece->getColor() == _turn)
+			if (chessPiece != NULL && chessPiece->getColor() == color)
 			{
-				chessPiece->getMoves(moves, &Tile(i, j), this, _turn);
+				chessPiece->getMoves(moves, &Tile(i, j), this, color);
 			}
 		}
 	}
@@ -230,7 +231,7 @@ Tile Position::findKing(int color)
 	{
 		for (int j = 0; j < 8; j++)
 		{
-			ChessPiece * chessPiece = board[j][i];
+			ChessPiece * chessPiece = board[i][j];
 
 			if (chessPiece != NULL && (chessPiece->getCode() == WK || chessPiece->getCode() == BK) && chessPiece->getColor() == _turn)
 			{
@@ -247,7 +248,7 @@ bool Position::isTileThreatened(Tile tile, std::list<Move>& moves)
 		Tile origin = move.getOrigin();
 		ChessPiece * chessPiece = board[origin.getColumn()][origin.getRow()];
 
-		if (chessPiece != NULL && chessPiece->getColor() != _turn && move.getDestination() == tile)
+		if (chessPiece != NULL && move.getDestination() == tile)
 		{
 			if (chessPiece->getCode() == WP || chessPiece->getCode() == BP)
 			{

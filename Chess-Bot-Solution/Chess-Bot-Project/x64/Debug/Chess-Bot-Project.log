@@ -1,3 +1,3 @@
 ﻿  Position.cpp
-c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(241): warning C4715: 'Position::findKing': not all control paths return a value
+c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(242): warning C4715: 'Position::findKing': not all control paths return a value
   Chess-Bot-Project.vcxproj -> C:\GitHub\Chess-Bot\Chess-Bot-Solution\x64\Debug\Chess-Bot-Project.exe

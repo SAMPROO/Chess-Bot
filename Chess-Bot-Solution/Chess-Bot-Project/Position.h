@@ -24,7 +24,8 @@ public:
 	bool getBlackKingRookMoved();
 
 	void getLegalMoves(std::list<Move>& list);
-	void getRawMoves(std::list<Move>& list);
+	void getRawMoves(std::list<Move>& moves, int color);
+	//void getRawMoves(std::list<Move>& list);
 	void getLegalMovesFromOrigin(std::list<Move>& list, Tile origin);
 
 	Tile findKing(int color);
