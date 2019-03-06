@@ -14,7 +14,7 @@ public:
 		int row = tile->getRow();
 		int column = tile->getColumn();
 
-		// 1. forward +1
+		// forward +1
 		int delta = color ? -1 : 1;
 
 		int new_row = row + delta;
@@ -24,10 +24,21 @@ public:
 
 		//Is new location empty?
 		if (position->board[column][new_row] == nullptr)
+		{
 			//Add new location to move list
 			list.push_back(Move(*tile, Tile(new_row, column)));
 
-		// 2. Attack!! (right)
+			// forward +2
+			if (row == (color ? 6 : 1))
+			{
+				//Is new location empty?
+				if (position->board[column][new_row + delta] == nullptr)
+					//Add new location to move list
+					list.push_back(Move(*tile, Tile(new_row + delta, column)));
+			}
+		}			
+
+		// Attack right
 		int new_column = column + 1;
 
 		if (new_column <= 7)
@@ -39,7 +50,7 @@ public:
 				list.push_back(Move(*tile, Tile(new_row, new_column)));
 		}
 
-		// 2. Attack!! (left)
+		// Attack left
 		new_column = column - 1;
 
 		if (new_column >= 0)
@@ -51,15 +62,6 @@ public:
 				list.push_back(Move(*tile, Tile(new_row, new_column)));
 		}
 
-		// 3. forward +2
-		if (row == (color ? 6 : 1))
-		{
-			new_row += delta;
-
-			//Is new location empty?
-			if (position->board[column][new_row] == nullptr)
-				//Add new location to move list
-				list.push_back(Move(*tile, Tile(new_row, column)));			
-		}
+		
 	}
 };

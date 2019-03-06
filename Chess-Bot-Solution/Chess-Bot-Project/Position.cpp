@@ -23,25 +23,23 @@ ChessPiece* Position::bPawn = new Pawn(L"\u265F", 1, BP);
 Position::Position() {
 
 	for (int i = 0; i < 8; i++)
-		for (int j = 0; j < 8; j++)
+		for (int j = 2; j < 6; j++)
 			board[i][j] = NULL;
 
 	// Initialization of white pieces 
-	//board[0][0] = wRook;
-	//board[1][0] = wHorse;
-	//board[2][0] = wBishop;
-	//board[3][0] = wKing;
-	//board[4][0] = wQueen;
-	//board[5][0] = wBishop;
-	board[1][2] = wHorse;
-	//board[3][4] = wRook;
-
-	board[1][1] = wPawn;
+	board[0][0] = wRook;
+	board[1][0] = wHorse;
+	board[2][0] = wBishop;
+	board[3][0] = wKing;
+	board[4][0] = wQueen;
+	board[5][0] = wBishop;
+	board[6][0] = wHorse;
+	board[7][0] = wRook;
 
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
 	{
-		//board[i][1] = wp;
+		board[i][1] = wPawn;
 		board[i][6] = bPawn;
 	}
 
@@ -52,7 +50,7 @@ Position::Position() {
 	board[4][7] = bQueen;
 	board[5][7] = bBishop;
 	board[6][7] = bHorse;
-	//board[7][7] = bRook;
+	board[7][7] = bRook;
 }
 
 void Position::updatePostion(Move* move)
