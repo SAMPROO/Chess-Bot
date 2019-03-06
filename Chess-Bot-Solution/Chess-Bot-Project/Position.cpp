@@ -23,7 +23,7 @@ ChessPiece* Position::bPawn = new Pawn(L"\u265F", 1, BP);
 Position::Position() {
 
 	for (int i = 0; i < 8; i++)
-		for (int j = 2; j < 6; j++)
+		for (int j = 0; j < 8; j++)
 			board[i][j] = NULL;
 
 	// Initialization of white pieces 
