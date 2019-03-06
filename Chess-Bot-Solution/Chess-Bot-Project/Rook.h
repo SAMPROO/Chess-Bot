@@ -19,10 +19,10 @@ public:
 		// Right
 		for (int i = column + 1; i < 8; i++)
 		{
-			ChessPiece* n = position->board[row][i];
+			ChessPiece* n = position->board[i][row];
 			
 			//Is new location empty?
-			if (n == nullptr)
+			if (n == NULL)
 			{
 				//Add new location to move list
 				list.push_back(Move(origin, Tile(row, i)));
@@ -42,7 +42,7 @@ public:
 		// Left
 		for (int i = column - 1; i >= 0; i--)
 		{
-			ChessPiece* n = position->board[row][i];
+			ChessPiece* n = position->board[i][row];
 
 			//Is new location empty?
 			if (n == nullptr)
@@ -65,7 +65,7 @@ public:
 		// Up
 		for (int i = row + 1; i < 8; i++)
 		{
-			ChessPiece* n = position->board[i][column];
+			ChessPiece* n = position->board[column][i];
 
 			//Is new location empty?
 			if (n == nullptr)
@@ -88,7 +88,7 @@ public:
 		// Down
 		for (int i = row - 1; i >= 0; i--)
 		{
-			ChessPiece* n = position->board[i][column];
+			ChessPiece* n = position->board[column][i];
 
 			//Is new location empty?
 			if (n == nullptr)

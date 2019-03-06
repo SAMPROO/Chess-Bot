@@ -39,10 +39,10 @@ public:
 				continue;
 			}
 
-			ChessPiece* n = position->board[new_row][new_column];
+			ChessPiece* n = position->board[new_column][new_row];
 
 			//Is new location empty?
-			if (n == nullptr)
+			if (n == NULL)
 			{
 				//Add new location to move list
 				list.push_back(Move(Tile(row, column), Tile(new_row, new_column)));

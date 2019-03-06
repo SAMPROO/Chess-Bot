@@ -23,7 +23,7 @@ public:
 			return;
 
 		//Is new location empty?
-		if (position->board[new_row][column] == nullptr)
+		if (position->board[column][new_row] == nullptr)
 			//Add new location to move list
 			list.push_back(Move(*tile, Tile(new_row, column)));
 
@@ -33,7 +33,7 @@ public:
 		if (new_column <= 7)
 		{
 			// Is location occupied by opponent?
-			ChessPiece * chessPiece = position->board[new_row][new_column];
+			ChessPiece * chessPiece = position->board[new_column][new_row];
 			if (chessPiece != NULL && chessPiece->getColor() != color)
 				//Add new location to move list
 				list.push_back(Move(*tile, Tile(new_row, new_column)));
@@ -45,19 +45,19 @@ public:
 		if (new_column >= 0)
 		{
 			// Is location occupied by opponent?
-			ChessPiece * chessPiece = position->board[new_row][new_column];
+			ChessPiece * chessPiece = position->board[new_column][new_row];
 			if (chessPiece != NULL && chessPiece->getColor() != color)
 				//Add new location to move list
 				list.push_back(Move(*tile, Tile(new_row, new_column)));
 		}
 
 		// 3. forward +2
-		if (row == color ? 6 : 1)
+		if (row == (color ? 6 : 1))
 		{
 			new_row += delta;
 
 			//Is new location empty?
-			if (position->board[new_row][column] == nullptr)
+			if (position->board[column][new_row] == nullptr)
 				//Add new location to move list
 				list.push_back(Move(*tile, Tile(new_row, column)));			
 		}

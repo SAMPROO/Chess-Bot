@@ -8,6 +8,10 @@ public:
 	//Constructor sets the starting position on the board
 	Position();
 	ChessPiece * board[8][8];
+
+	static ChessPiece *wKing, *wQueen, *wRook, *wBishop, *wHorse, *wPawn;	// Valkeat nappulat.
+	static ChessPiece *bKing, *bQueen, *bRook, *bBishop, *bHorse, *bPawn;	// Mustat nappulat.
+
 	void updatePostion(Move* move);
 	int getTurn();
 	void setTurn(int color);

@@ -24,7 +24,7 @@ public:
 			if (new_row > 7 || new_column > 7)
 				break;
 
-			ChessPiece* n = position->board[new_row][new_column];
+			ChessPiece* n = position->board[new_column][new_row];
 
 			//Is new location empty?
 			if (n == nullptr)
@@ -48,10 +48,10 @@ public:
 			int new_row = row + i;
 			int new_column = column - i;
 
-			if (new_row > 7 || new_column > 7)
+			if (new_row > 7 || new_column < 0)
 				break;
 
-			ChessPiece* n = position->board[new_row][new_column];
+			ChessPiece* n = position->board[new_column][new_row];
 
 			//Is new location empty?
 			if (n == nullptr)
@@ -75,10 +75,10 @@ public:
 			int new_row = row - i;
 			int new_column = column + i;
 
-			if (new_row < 0 || new_column < 0)
+			if (new_row < 0 || new_column > 7)
 				break;
 
-			ChessPiece* n = position->board[new_row][new_column];
+			ChessPiece* n = position->board[new_column][new_row];
 
 			//Is new location empty?
 			if (n == nullptr)
@@ -105,7 +105,7 @@ public:
 			if (new_row < 0 || new_column < 0)
 				break;
 
-			ChessPiece* n = position->board[new_row][new_column];
+			ChessPiece* n = position->board[new_column][new_row];
 
 			//Is new location empty?
 			if (n == nullptr)
