@@ -52,17 +52,17 @@ void UI::drawBoard()
 
 Move UI::getOpponentMove() {
 
-	std::wcout << L"\n\nMove: ";
+	std::wcout << "\nMove: ";
 	std::string inputOpponentMove;
 	std::cin >> inputOpponentMove;
 
 	Move opponentMove;
 
-	if (inputOpponentMove == "O-O")
+	if (inputOpponentMove == "0-0")
 	{
 		opponentMove = Move(true, false);
 	}
-	else if (inputOpponentMove == "O-O-O")
+	else if (inputOpponentMove == "0-0-0")
 	{
 		opponentMove = Move(false, true);
 	}
@@ -84,6 +84,9 @@ Move UI::getOpponentMove() {
 			char row = inputOpponentMove[i + 1]; // 123..
 			int columnInt = column - 'a';
 			int rowInt = row - '1';
+
+			if (rowInt < 0 || rowInt > 7 || columnInt < 0 || columnInt > 7)
+				return opponentMove;
 
 			tiles[j] = Tile(rowInt, columnInt);
 		}

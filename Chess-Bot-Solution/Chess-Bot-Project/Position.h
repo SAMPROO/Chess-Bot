@@ -20,6 +20,10 @@ public:
 	bool getShortRookMoved(int color);
 	bool getLongRookMoved(int color);
 
+	void setKingMoved();
+	void setShortRookMoved();
+	void setLongRookMoved();
+
 	//bool getWhiteKingMoved();
 	//bool getBlackKingMoved();
 	//bool getWhiteQueenRookMoved();
@@ -30,7 +34,7 @@ public:
 	void getLegalMoves(std::list<Move>& list);
 	void getRawMoves(std::list<Move>& moves, int color);
 
-	void checkKingCheck(std::list<Move>& moves);
+	void isCheck(std::list<Move>& moves);
 	void addCastling(std::list<Move>& moves);
 
 
