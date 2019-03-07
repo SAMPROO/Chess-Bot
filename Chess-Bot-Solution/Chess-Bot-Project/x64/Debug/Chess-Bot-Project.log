@@ -1,15 +1,2 @@
-﻿  Chess-Bot-Project.cpp
-  Position.cpp
-  UI.cpp
-  Generating Code...
-Position.obj : error LNK2005: "public: __cdecl MoveStack::MoveStack(void)" (??0MoveStack@@QEAA@XZ) already defined in Chess-Bot-Project.obj
-Position.obj : error LNK2005: "public: __cdecl MoveStack::~MoveStack(void)" (??1MoveStack@@QEAA@XZ) already defined in Chess-Bot-Project.obj
-Position.obj : error LNK2005: "public: bool __cdecl MoveStack::isEmpty(void)" (?isEmpty@MoveStack@@QEAA_NXZ) already defined in Chess-Bot-Project.obj
-Position.obj : error LNK2005: "public: void __cdecl MoveStack::pop(void)" (?pop@MoveStack@@QEAAXXZ) already defined in Chess-Bot-Project.obj
-Position.obj : error LNK2005: "public: void __cdecl MoveStack::push(class Move)" (?push@MoveStack@@QEAAXVMove@@@Z) already defined in Chess-Bot-Project.obj
-UI.obj : error LNK2005: "public: __cdecl MoveStack::MoveStack(void)" (??0MoveStack@@QEAA@XZ) already defined in Chess-Bot-Project.obj
-UI.obj : error LNK2005: "public: __cdecl MoveStack::~MoveStack(void)" (??1MoveStack@@QEAA@XZ) already defined in Chess-Bot-Project.obj
-UI.obj : error LNK2005: "public: bool __cdecl MoveStack::isEmpty(void)" (?isEmpty@MoveStack@@QEAA_NXZ) already defined in Chess-Bot-Project.obj
-UI.obj : error LNK2005: "public: void __cdecl MoveStack::pop(void)" (?pop@MoveStack@@QEAAXXZ) already defined in Chess-Bot-Project.obj
-UI.obj : error LNK2005: "public: void __cdecl MoveStack::push(class Move)" (?push@MoveStack@@QEAAXVMove@@@Z) already defined in Chess-Bot-Project.obj
-C:\Users\Blackstorm\OneDrive\Vuosi2\Jakso2\C++ projekti\Chess-Bot\Chess-Bot-Solution\x64\Debug\Chess-Bot-Project.exe : fatal error LNK1169: one or more multiply defined symbols found
+﻿  Position.cpp
+  Chess-Bot-Project.vcxproj -> C:\GitHub\Chess-Bot\Chess-Bot-Solution\x64\Debug\Chess-Bot-Project.exe

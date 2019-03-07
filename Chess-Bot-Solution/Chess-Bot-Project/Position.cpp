@@ -177,25 +177,25 @@ void Position::changeTurn()
 
 bool Position::getKingMoved(int color)
 {
-	return false; //_moveStack->castlingBools[color];
+	return _moveStack->castlingBools[color];
 	//return color ? _hasBlackKingMoved : _hasWhiteKingMoved;
 }
 
 bool Position::getShortRookMoved(int color)
 {
-	return false; // _moveStack->castlingBools[2 + color];
+	return _moveStack->castlingBools[2 + color];
 	//return color ? _hasBlackKingRookMoved : _hasWhiteKingRookMoved;
 }
 
 bool Position::getLongRookMoved(int color)
 {
-	return false; // _moveStack->castlingBools[4 + color];
+	return _moveStack->castlingBools[4 + color];
 	//return color ? _hasBlackQueenRookMoved : _hasWhiteQueenRookMoved;
 }
 
 void Position::setKingMoved()
 {
-	//_moveStack->castlingBools[_turn] = true;
+	_moveStack->castlingBools[_turn] = true;
 	//if (_turn)
 	//	_hasBlackKingMoved = true;
 	//else
@@ -204,7 +204,7 @@ void Position::setKingMoved()
 
 void Position::setShortRookMoved()
 {
-	//_moveStack->castlingBools[2 + _turn] = true;
+	_moveStack->castlingBools[2 + _turn] = true;
 	//if (_turn)
 	//	_hasBlackKingRookMoved = true;
 	//else
@@ -213,7 +213,7 @@ void Position::setShortRookMoved()
 
 void Position::setLongRookMoved()
 {
-	//_moveStack->castlingBools[4 + _turn] = true;
+	_moveStack->castlingBools[4 + _turn] = true;
 	//if (_turn)
 	//	_hasBlackQueenRookMoved = true;
 	//else
