@@ -7,10 +7,7 @@ Tile::Tile(int row, int column) {
 
 bool Tile::operator!=(const Tile & rhs) const
 {
-	if (_column == rhs._column)
-		return false;
-
-	if (_row == rhs._row)
+	if (_column == rhs._column && _row == rhs._row)
 		return false;
 
 	return true;

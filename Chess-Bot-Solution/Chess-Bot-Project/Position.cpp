@@ -20,7 +20,9 @@ ChessPiece* Position::bKing = new King(L"\u265A", 1, BK);
 ChessPiece* Position::bQueen = new Queen(L"\u265B", 1, BQ);
 ChessPiece* Position::bPawn = new Pawn(L"\u265F", 1, BP);
 
-Position::Position() {
+Position::Position(MoveStack * moveStack) {
+
+	_moveStack = moveStack;
 
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
@@ -55,8 +57,10 @@ Position::Position() {
 	board[7][7] = bRook;
 }
 
-void Position::updatePostion(Move* move)
+void Position::updatePosition(Move* move)
 {
+	_moveStack->push(*move);
+
 	int row = _turn ? 7 : 0;
 
 	// Short Rook
@@ -111,11 +115,54 @@ void Position::updatePostion(Move* move)
 			break;
 		}
 
+		_moveStack->_capturedPiece = board[destinationColumn][destinationRow];
+
 		board[destinationColumn][destinationRow] = chessPiece;
 		board[originColumn][originRow] = NULL;
 	}
 
-	setTurn(!_turn);
+	changeTurn();
+}
+
+void Position::undoMove()
+{
+	Move move = _moveStack->_move;
+
+	changeTurn();
+
+	int row = _turn ? 7 : 0;
+
+	// Undo short Rook
+	if (move.isShortRook()) {
+		board[4][row] = board[6][row]; // King to new position
+		board[6][row] = NULL; // Clear old position
+		board[7][row] = board[5][row]; // Rook to new position
+		board[5][row] = NULL; // Clear old position
+	}
+	// Undo long Rook
+	else if (move.isLongRook()) {
+		board[4][row] = board[2][row]; // King to new position
+		board[2][row] = NULL; // Clear old position
+		board[0][row] = board[3][row]; // Rook to new position
+		board[3][row] = NULL; // Clear old position
+	}
+	// Undo normal move
+	else
+	{
+		Tile tileOrigin = move.getOrigin();
+		Tile tileDestination = move.getDestination();
+
+		int destinationRow = tileDestination.getRow();
+		int destinationColumn = tileDestination.getColumn();
+
+		int originRow = tileOrigin.getRow();
+		int originColumn = tileOrigin.getColumn();
+
+		board[originColumn][originRow] = board[destinationColumn][destinationRow];
+		board[destinationColumn][destinationRow] = _moveStack->_capturedPiece;
+	}
+
+	_moveStack->pop();
 }
 
 int Position::getTurn()
@@ -123,48 +170,54 @@ int Position::getTurn()
 	return _turn;
 }
 
-void Position::setTurn(int color)
+void Position::changeTurn()
 {
-	_turn = color;
+	_turn = !_turn;
 }
 
 bool Position::getKingMoved(int color)
 {
-	return color ? _hasBlackKingMoved : _hasWhiteKingMoved;
+	return false; //_moveStack->castlingBools[color];
+	//return color ? _hasBlackKingMoved : _hasWhiteKingMoved;
 }
 
 bool Position::getShortRookMoved(int color)
 {
-	return color ? _hasBlackKingRookMoved : _hasWhiteKingRookMoved;
+	return false; // _moveStack->castlingBools[2 + color];
+	//return color ? _hasBlackKingRookMoved : _hasWhiteKingRookMoved;
 }
 
 bool Position::getLongRookMoved(int color)
 {
-	return color ? _hasBlackQueenRookMoved : _hasWhiteQueenRookMoved;
+	return false; // _moveStack->castlingBools[4 + color];
+	//return color ? _hasBlackQueenRookMoved : _hasWhiteQueenRookMoved;
 }
 
 void Position::setKingMoved()
 {
-	if (_turn)
-		_hasBlackKingMoved = true;
-	else
-		_hasWhiteKingMoved = true;
+	//_moveStack->castlingBools[_turn] = true;
+	//if (_turn)
+	//	_hasBlackKingMoved = true;
+	//else
+	//	_hasWhiteKingMoved = true;
 }
 
 void Position::setShortRookMoved()
 {
-	if (_turn)
-		_hasBlackKingRookMoved = true;
-	else
-		_hasWhiteKingRookMoved = true;		
+	//_moveStack->castlingBools[2 + _turn] = true;
+	//if (_turn)
+	//	_hasBlackKingRookMoved = true;
+	//else
+	//	_hasWhiteKingRookMoved = true;		
 }
 
 void Position::setLongRookMoved()
 {
-	if (_turn)
-		_hasBlackQueenRookMoved = true;
-	else
-		_hasWhiteQueenRookMoved = true;
+	//_moveStack->castlingBools[4 + _turn] = true;
+	//if (_turn)
+	//	_hasBlackQueenRookMoved = true;
+	//else
+	//	_hasWhiteQueenRookMoved = true;
 }
 
 //bool Position::getWhiteKingMoved()
@@ -222,7 +275,19 @@ void Position::getRawMoves(std::list<Move>& moves, int color)
 
 void Position::isCheck(std::list<Move>& moves)
 {
-	Tile king = findKing(_turn);
+	Tile king;
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			ChessPiece * chessPiece = board[i][j];
+
+			if (chessPiece != NULL && (chessPiece->getCode() == WK || chessPiece->getCode() == BK) && chessPiece->getColor() == _turn)
+			{
+				king = Tile(j, i);
+			}
+		}
+	}	
 
 	std::list<Move> safeMoves;
 
@@ -230,7 +295,7 @@ void Position::isCheck(std::list<Move>& moves)
 	{
 		Position newPosition = *this;
 
-		newPosition.updatePostion(&move);
+		newPosition.updatePosition(&move);
 
 		Tile kingTile = move.getOrigin() == king ? move.getDestination() : king;
 
@@ -241,22 +306,6 @@ void Position::isCheck(std::list<Move>& moves)
 	}
 
 	moves = safeMoves;
-}
-
-Tile Position::findKing(int color)
-{
-	for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 8; j++)
-		{
-			ChessPiece * chessPiece = board[i][j];
-
-			if (chessPiece != NULL && (chessPiece->getCode() == WK || chessPiece->getCode() == BK) && chessPiece->getColor() == _turn)
-			{
-				return Tile(j, i);
-			}
-		}
-	}
 }
 
 void Position::addCastling(std::list<Move>& moves)

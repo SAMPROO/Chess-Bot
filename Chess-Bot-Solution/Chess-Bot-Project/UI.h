@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Position.h"
-#include "Move.h"
+
+using namespace std;
 
 class UI {
 
@@ -9,5 +10,5 @@ public:
 	UI(Position* position);
 	Position* _position;
 	void drawBoard();
-	Move getOpponentMove();
+	Move getOpponentMove(string inputOpponentMove);
 };

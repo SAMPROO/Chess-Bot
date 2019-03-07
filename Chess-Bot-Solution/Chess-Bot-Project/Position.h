@@ -1,20 +1,24 @@
 #pragma once
 #include "ChessPiece.h"
-#include "Move.h"
+#include "MoveStack.h"
+
+//class MoveStack;
 
 class Position {
 
 public:
 	//Constructor sets the starting position on the board
-	Position();
+	Position(MoveStack * moveStack);
 	ChessPiece * board[8][8];
 
 	static ChessPiece *wKing, *wQueen, *wRook, *wBishop, *wHorse, *wPawn;	// Valkeat nappulat.
 	static ChessPiece *bKing, *bQueen, *bRook, *bBishop, *bHorse, *bPawn;	// Mustat nappulat.
 
-	void updatePostion(Move* move);
+	void updatePosition(Move* move);
+	void undoMove();
+
 	int getTurn();
-	void setTurn(int color);
+	void changeTurn();
 
 	bool getKingMoved(int color);
 	bool getShortRookMoved(int color);
@@ -37,17 +41,10 @@ public:
 	void isCheck(std::list<Move>& moves);
 	void addCastling(std::list<Move>& moves);
 
-
-	Tile findKing(int color);
 	bool isTileThreatened(Tile tile, int color);
+
+	MoveStack * _moveStack;
 
 private:
 	int _turn = 0;
-	bool _hasWhiteKingMoved = 0;
-	bool _hasBlackKingMoved = 0;
-	bool _hasWhiteQueenRookMoved = 0;
-	bool _hasWhiteKingRookMoved = 0;
-	bool _hasBlackQueenRookMoved = 0;
-	bool _hasBlackKingRookMoved = 0;
-
 };

@@ -1,9 +1,7 @@
 #pragma once
-
 #include <string>
 #include <list>
 #include "Move.h"
-// #include "Position.h"
 
 class Position;
 

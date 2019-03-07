@@ -1,10 +1,10 @@
-#include "UI.h"
 #include <windows.h>
 #include <iostream>
 #include <io.h>
 #include <fcntl.h>
 #include <string>
 #include <stdlib.h>
+#include "UI.h"
 
 UI::UI(Position* position)
 {
@@ -23,7 +23,7 @@ void UI::drawBoard()
 	for (int i = 7; i >= 0; i--)
 	{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 240);
-		std::wcout << i + 1;
+		wcout << i + 1;
 
 		for (int j = 0; j < 8; j++)
 		{
@@ -33,29 +33,25 @@ void UI::drawBoard()
 
 			if (temp)
 			{
-				std::wcout << " " << temp->getUnicode() << " ";
+				wcout << " " << temp->getUnicode() << " ";
 			}
 			else
 			{
-				std::wcout << "   ";
+				wcout << "   ";
 			}			
 
 			if(j < 7)
 				color = !color;
 		}
 
-		std::wcout << "\n";
+		wcout << "\n";
 	}
 
-	std::wcout << "  a  b  c  d  e  f  g  h";
+	wcout << "  a  b  c  d  e  f  g  h";
 }
 
-Move UI::getOpponentMove() {
-
-	std::wcout << "\nMove: ";
-	std::string inputOpponentMove;
-	std::cin >> inputOpponentMove;
-
+Move UI::getOpponentMove(string inputOpponentMove) 
+{
 	Move opponentMove;
 
 	if (inputOpponentMove == "0-0")
