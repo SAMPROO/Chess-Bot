@@ -71,8 +71,11 @@ void Position::updatePosition(Move* move, bool realMove)
 		board[5][row] = board[7][row]; // Rook to new position
 		board[7][row] = NULL; // Clear old position
 
-		setShortRookMoved();
-		setKingMoved();
+		if (realMove)
+		{
+			setShortRookMoved();
+			setKingMoved();
+		}
 	}
 	// Long Rook
 	else if (move->isLongRook()) {
@@ -122,7 +125,12 @@ void Position::updatePosition(Move* move, bool realMove)
 				break;
 			}
 
-			_moveStack->_capturedPiece = board[destinationColumn][destinationRow];
+			if (move->isEnPassant() == false)
+				_moveStack->_capturedPiece = board[destinationColumn][destinationRow];
+			else {
+				_moveStack->_capturedPiece = board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)];
+				board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = NULL;
+			}
 		}		
 
 		board[destinationColumn][destinationRow] = chessPiece;
@@ -139,8 +147,8 @@ void Position::undoMove()
 		return;
 
 	Move move = _moveStack->peak()->_move;
-	_moveStack->pop();
 
+	_moveStack->pop();
 	//changeTurn();
 
 	int row = getTurn() ? 7 : 0;
@@ -172,8 +180,15 @@ void Position::undoMove()
 		int originColumn = tileOrigin.getColumn();
 
 		board[originColumn][originRow] = board[destinationColumn][destinationRow];
-		board[destinationColumn][destinationRow] = _moveStack->_capturedPiece;
+
+		if (move.isEnPassant() == false)
+			board[destinationColumn][destinationRow] = _moveStack->_capturedPiece;
+		else {
+			board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = _moveStack->_capturedPiece;
+			board[destinationColumn][destinationRow] = NULL;
+		}
 	}
+
 }
 
 int Position::getTurn()
@@ -219,8 +234,8 @@ void Position::setLongRookMoved()
 void Position::getLegalMoves(std::list<Move>& moves)
 {
 	getRawMoves(moves, getTurn());
-	addCastling(moves);
 	addEnPassant(moves);
+	addCastling(moves);
 	isCheck(moves);
 }
 
@@ -320,7 +335,7 @@ void Position::addEnPassant(std::list<Move>& moves)
 		return;
 
 	Tile lastDestination = lastMove.getDestination();
-	if (lastDestination.getRow() != (!getTurn() ? 5 : 4))
+	if (lastDestination.getRow() != (!getTurn() ? 4 : 3))
 		return;
 
 	ChessPiece * lastPiece = board[lastDestination.getColumn()][lastDestination.getRow()];
@@ -334,10 +349,13 @@ void Position::addEnPassant(std::list<Move>& moves)
 		if (column < 0 || column > 7)
 			continue;
 
-		ChessPiece * chessPiece = board[column][getTurn() ? 5 : 4];
+		ChessPiece * chessPiece = board[column][!getTurn() ? 4 : 3];
 		if (chessPiece != NULL && chessPiece->getCode() == (getTurn() ? BP : WP))
 		{
-			moves.push_back(Move(Tile(getTurn() ? 5 : 4, column), lastDestination));
+			Tile origin = Tile(!getTurn() ? 4 : 3, column);
+			Tile destination = Tile(lastDestination.getRow() + (getTurn() ? -1 : 1), lastDestination.getColumn());
+
+			moves.push_back(Move(origin, destination, true));
 		}
 	}	
 }

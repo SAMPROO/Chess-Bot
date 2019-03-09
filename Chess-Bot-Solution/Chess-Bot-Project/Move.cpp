@@ -1,8 +1,9 @@
 #include "Move.h"
 
-Move::Move(Tile origin, Tile destination) {
+Move::Move(Tile origin, Tile destination, bool enPassant) {
 	_origin = origin;
 	_destination = destination;
+	_enPassant = enPassant;
 }
 
 Move::Move(bool shortRook, bool longRook) {
@@ -44,5 +45,10 @@ bool Move::isShortRook() {
 
 bool Move::isLongRook() {
 	return _longRook;
+}
+
+bool Move::isEnPassant()
+{
+	return _enPassant;
 }
 
