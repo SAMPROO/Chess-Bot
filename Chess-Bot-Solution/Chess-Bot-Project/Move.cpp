@@ -1,9 +1,10 @@
 #include "Move.h"
 
-Move::Move(Tile origin, Tile destination, bool enPassant) {
+Move::Move(Tile origin, Tile destination, bool enPassant, bool promoted) {
 	_origin = origin;
 	_destination = destination;
 	_enPassant = enPassant;
+	_promoted = promoted;
 }
 
 Move::Move(bool shortRook, bool longRook) {
@@ -17,9 +18,6 @@ bool Move::operator==(const Move & rhs) const
 		return false;
 
 	if (_longRook != rhs._longRook)
-		return false;
-	
-	if (_upgradeTo != rhs._upgradeTo)
 		return false;
 
 	if (_origin != rhs._origin)
@@ -50,5 +48,10 @@ bool Move::isLongRook() {
 bool Move::isEnPassant()
 {
 	return _enPassant;
+}
+
+bool Move::isPromoted()
+{
+	return _promoted;
 }
 

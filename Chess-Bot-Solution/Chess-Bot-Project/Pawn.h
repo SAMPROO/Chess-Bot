@@ -26,7 +26,7 @@ public:
 		if (position->board[column][new_row] == nullptr)
 		{
 			//Add new location to move list
-			list.push_back(Move(*tile, Tile(new_row, column)));
+			list.push_back(Move(*tile, Tile(new_row, column), false, new_row == 7 || new_row == 0));
 
 			// forward +2
 			if (row == (color ? 6 : 1))
@@ -47,7 +47,7 @@ public:
 			ChessPiece * chessPiece = position->board[new_column][new_row];
 			if (chessPiece != NULL && chessPiece->getColor() != color)
 				//Add new location to move list
-				list.push_back(Move(*tile, Tile(new_row, new_column)));
+				list.push_back(Move(*tile, Tile(new_row, new_column), false, new_row == 7 || new_row == 0));
 		}
 
 		// Attack left
@@ -59,7 +59,7 @@ public:
 			ChessPiece * chessPiece = position->board[new_column][new_row];
 			if (chessPiece != NULL && chessPiece->getColor() != color)
 				//Add new location to move list
-				list.push_back(Move(*tile, Tile(new_row, new_column)));
+				list.push_back(Move(*tile, Tile(new_row, new_column), false, new_row == 7 || new_row == 0));
 		}
 
 		

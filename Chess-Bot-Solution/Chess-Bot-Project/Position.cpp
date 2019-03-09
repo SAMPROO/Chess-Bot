@@ -6,6 +6,8 @@
 #include "Queen.h"
 #include "Pawn.h"
 
+using namespace std;
+
 ChessPiece* Position::wRook = new Rook(L"\u2656", 0, WR);
 ChessPiece* Position::wHorse = new Horse(L"\u2658", 0, WH);
 ChessPiece* Position::wBishop = new Bishop(L"\u2657", 0, WB);
@@ -38,13 +40,13 @@ Position::Position(MoveStack * moveStack) {
 	//board[6][0] = wHorse;
 	board[7][0] = wRook;
 
-	//board[4][4] = wPawn;
+	board[6][6] = wPawn;
 
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
 	{
-		board[i][1] = wPawn;
-		board[i][6] = bPawn;
+		//board[i][1] = wPawn;
+		//board[i][6] = bPawn;
 	}
 
 	board[0][7] = bRook;
@@ -128,11 +130,45 @@ void Position::updatePosition(Move* move, bool realMove)
 			_moveStack->_capturedPiece = board[destinationColumn][destinationRow];
 			
 			if (move->isEnPassant())
-			{
 				_moveStack->_enPassant = board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)];
-				board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = NULL;
+
+			if (move->isPromoted())
+			{
+				wstring Q = getTurn() ? bQueen->getUnicode() : wQueen->getUnicode();
+				wstring H = getTurn() ? bHorse->getUnicode() : wHorse->getUnicode();
+				wstring R = getTurn() ? bRook->getUnicode() : wRook->getUnicode();
+				wstring B = getTurn() ? bBishop->getUnicode() : wBishop->getUnicode();
+
+				wcout << "\n" << Q << " " << H << " " << R << " " << B
+					<< "\nQ H R B" 
+					<< "\n\nPromote to: " ;
+
+				char selection;
+				do{
+					cin >> selection;
+					selection = tolower(selection);
+				} while (selection != 'q' && selection != 'h' && selection != 'r' && selection != 'b');
+
+				switch (selection)
+				{
+				case 'q':
+					chessPiece = getTurn() ? bQueen : wQueen;
+					break;
+				case 'h':
+					chessPiece = getTurn() ? bHorse : wHorse;
+					break;
+				case 'r':
+					chessPiece = getTurn() ? bRook : wRook;
+					break;
+				case 'b':
+					chessPiece = getTurn() ? bBishop : wBishop;
+					break;
+				}
 			}
-		}		
+		}
+
+		if (move->isEnPassant())
+			board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = NULL;
 
 		board[destinationColumn][destinationRow] = chessPiece;
 		board[originColumn][originRow] = NULL;
@@ -150,7 +186,6 @@ void Position::undoMove()
 	Move move = _moveStack->peak()->_move;
 
 	_moveStack->pop();
-	//changeTurn();
 
 	int row = getTurn() ? 7 : 0;
 
@@ -180,17 +215,17 @@ void Position::undoMove()
 		int originRow = tileOrigin.getRow();
 		int originColumn = tileOrigin.getColumn();
 
-		board[originColumn][originRow] = board[destinationColumn][destinationRow];
+		if (move.isPromoted() == false)
+			board[originColumn][originRow] = board[destinationColumn][destinationRow];
+		else
+			board[originColumn][originRow] = getTurn() ? bPawn : wPawn;
+
 
 		board[destinationColumn][destinationRow] = _moveStack->_capturedPiece;
 		
 		if (move.isEnPassant())
-		{
 			board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = _moveStack->_enPassant;
-			board[destinationColumn][destinationRow] = NULL;
-		}
 	}
-
 }
 
 int Position::getTurn()
