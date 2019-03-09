@@ -1,7 +1,7 @@
 #include "MoveStack.h"
 
 MoveStack::MoveStack() {
-	_top = NULL;
+	//_top = NULL;
 }
 
 MoveStack::~MoveStack() {
@@ -14,8 +14,12 @@ void MoveStack::push(Move move)
 	MoveStack *temp = new MoveStack();
 	temp->_move = move;
 
-	for (int i = 0; i < 6; i++)
-		temp->castlingBools[i] = castlingBools[i];
+	if (!isEmpty()) {
+		for (int i = 0; i < 6; i++)
+			temp->castlingBools[i] = _top->castlingBools[i];
+		temp->_turn = _top->_turn;
+	}
+		
 
 	temp->_next = _top;
 	_top = temp;
@@ -31,7 +35,40 @@ void MoveStack::pop()
 	}
 }
 
+MoveStack * MoveStack::peak() 
+{
+	return _top;
+}
+
 bool MoveStack::isEmpty()
 {
 	return (_top == NULL);
+}
+
+bool MoveStack::getCastlingBools(int index)
+{
+	if (isEmpty()) 
+		return false;
+
+	return _top->castlingBools[index];
+}
+
+void MoveStack::setCastlingBools(int index, bool state)
+{
+	if (isEmpty() == false)
+		_top->castlingBools[index] = state;
+}
+
+int MoveStack::getTurn()
+{
+	if (isEmpty())
+		return 0;
+
+	return _top->_turn;
+}
+
+void MoveStack::changeTurn()
+{
+	if (isEmpty() == false)
+		_top->_turn = !_top->_turn;
 }

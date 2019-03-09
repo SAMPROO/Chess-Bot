@@ -12,10 +12,15 @@ public:
 	void push(Move move);
 
 	void pop();
+	MoveStack * peak();
 
 	bool isEmpty();
 
-	bool castlingBools[6] = { 0 };
+	bool getCastlingBools(int index);
+	void setCastlingBools(int index, bool state);
+
+	int getTurn();
+	void changeTurn();
 
 	Move _move;
 	ChessPiece * _capturedPiece = NULL;
@@ -25,10 +30,7 @@ private:
 	MoveStack* _top;
 	MoveStack* _next;
 
-	//bool _hasWhiteKingMoved = 0;
-	//bool _hasBlackKingMoved = 0;
-	//bool _hasWhiteQueenRookMoved = 0;
-	//bool _hasWhiteKingRookMoved = 0;
-	//bool _hasBlackQueenRookMoved = 0;
-	//bool _hasBlackKingRookMoved = 0;
+	bool castlingBools[6] = { 0,0,0,0,0,0 };
+
+	int _turn = 0;
 };
