@@ -24,6 +24,7 @@ public:
 
 	Move _move;
 	ChessPiece * _capturedPiece = NULL;
+	ChessPiece * _enPassant = NULL;
 	ChessPiece * _upgradedFrom = NULL;
 
 private:

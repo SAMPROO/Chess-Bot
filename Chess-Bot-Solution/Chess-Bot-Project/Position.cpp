@@ -125,10 +125,11 @@ void Position::updatePosition(Move* move, bool realMove)
 				break;
 			}
 
-			if (move->isEnPassant() == false)
-				_moveStack->_capturedPiece = board[destinationColumn][destinationRow];
-			else {
-				_moveStack->_capturedPiece = board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)];
+			_moveStack->_capturedPiece = board[destinationColumn][destinationRow];
+			
+			if (move->isEnPassant())
+			{
+				_moveStack->_enPassant = board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)];
 				board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = NULL;
 			}
 		}		
@@ -181,10 +182,11 @@ void Position::undoMove()
 
 		board[originColumn][originRow] = board[destinationColumn][destinationRow];
 
-		if (move.isEnPassant() == false)
-			board[destinationColumn][destinationRow] = _moveStack->_capturedPiece;
-		else {
-			board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = _moveStack->_capturedPiece;
+		board[destinationColumn][destinationRow] = _moveStack->_capturedPiece;
+		
+		if (move.isEnPassant())
+		{
+			board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = _moveStack->_enPassant;
 			board[destinationColumn][destinationRow] = NULL;
 		}
 	}
