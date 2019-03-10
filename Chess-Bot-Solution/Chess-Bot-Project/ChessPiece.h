@@ -18,14 +18,14 @@ private:
 	std::wstring _unicode;
 	int _color = 0; // white = 0, black = 1
 	int _code; // enum
+	double _value;
 public:
-	ChessPiece(std::wstring, int, int);
-	void setCode(int);
+	ChessPiece(std::wstring, int, int, double);
 	int getCode();
-	void setUnicode(std::wstring);
 	std::wstring getUnicode();
-	void setColor(int);
 	int getColor();
+	double getValue();
+
 
 	virtual void getMoves(
 		std::list<Move>& list,

@@ -7,7 +7,7 @@ class King : public ChessPiece
 
 public:
 
-	King(std::wstring unicode, int color, int code) : ChessPiece(unicode, color, code) {}
+	King(std::wstring unicode, int color, int code, double value) : ChessPiece(unicode, color, code, value) {}
 
 	//King possible moves
 	int moves[8][2] = {

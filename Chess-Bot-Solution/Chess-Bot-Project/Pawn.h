@@ -6,7 +6,7 @@ class Pawn : public ChessPiece
 {
 public:
 
-	Pawn(std::wstring unicode, int color, int code) : ChessPiece(unicode, color, code) {}
+	Pawn(std::wstring unicode, int color, int code, double value) : ChessPiece(unicode, color, code, value) {}
 
 	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
 	{

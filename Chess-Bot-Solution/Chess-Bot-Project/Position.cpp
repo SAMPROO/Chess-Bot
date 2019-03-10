@@ -8,19 +8,26 @@
 
 using namespace std;
 
-ChessPiece* Position::wRook = new Rook(L"\u2656", 0, WR);
-ChessPiece* Position::wHorse = new Horse(L"\u2658", 0, WH);
-ChessPiece* Position::wBishop = new Bishop(L"\u2657", 0, WB);
-ChessPiece* Position::wKing = new King(L"\u2654", 0, WK);
-ChessPiece* Position::wQueen = new Queen(L"\u2655", 0, WQ);
-ChessPiece* Position::wPawn = new Pawn(L"\u2659", 0, WP);
+const double 	kingValue	=	100, 
+				queenValue	=	9, 
+				rookValue	=	5, 
+				bishopValue =	3.25, 
+				horseValue	=	3, 
+				pawnValue	=	1;
+
+ChessPiece* Position::wRook = new Rook(L"\u2656", 0, WR, rookValue);
+ChessPiece* Position::wHorse = new Horse(L"\u2658", 0, WH, horseValue);
+ChessPiece* Position::wBishop = new Bishop(L"\u2657", 0, WB, bishopValue);
+ChessPiece* Position::wKing = new King(L"\u2654", 0, WK, kingValue);
+ChessPiece* Position::wQueen = new Queen(L"\u2655", 0, WQ, queenValue);
+ChessPiece* Position::wPawn = new Pawn(L"\u2659", 0, WP, pawnValue);
 			
-ChessPiece* Position::bRook = new Rook(L"\u265C", 1, BR);
-ChessPiece* Position::bHorse = new Horse(L"\u265E", 1, BH);
-ChessPiece* Position::bBishop = new Bishop(L"\u265D", 1, BB);
-ChessPiece* Position::bKing = new King(L"\u265A", 1, BK);
-ChessPiece* Position::bQueen = new Queen(L"\u265B", 1, BQ);
-ChessPiece* Position::bPawn = new Pawn(L"\u265F", 1, BP);
+ChessPiece* Position::bRook = new Rook(L"\u265C", 1, BR, rookValue);
+ChessPiece* Position::bHorse = new Horse(L"\u265E", 1, BH, horseValue);
+ChessPiece* Position::bBishop = new Bishop(L"\u265D", 1, BB, bishopValue);
+ChessPiece* Position::bKing = new King(L"\u265A", 1, BK, kingValue);
+ChessPiece* Position::bQueen = new Queen(L"\u265B", 1, BQ, queenValue);
+ChessPiece* Position::bPawn = new Pawn(L"\u265F", 1, BP, pawnValue);
 
 Position::Position(MoveStack * moveStack) {
 
@@ -32,30 +39,28 @@ Position::Position(MoveStack * moveStack) {
 
 	// Initialization of white pieces 
 	board[0][0] = wRook;
-	//board[1][0] = wHorse;
-	//board[2][0] = wBishop;
-	//board[3][0] = wQueen;
+	board[1][0] = wHorse;
+	board[2][0] = wBishop;
+	board[3][0] = wQueen;
 	board[4][0] = wKing;
-	//board[5][0] = wBishop;
-	//board[6][0] = wHorse;
+	board[5][0] = wBishop;
+	board[6][0] = wHorse;
 	board[7][0] = wRook;
-
-	board[6][6] = wPawn;
 
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
 	{
-		//board[i][1] = wPawn;
-		//board[i][6] = bPawn;
+		board[i][1] = wPawn;
+		board[i][6] = bPawn;
 	}
 
 	board[0][7] = bRook;
-	//board[1][7] = bHorse;
-	//board[2][7] = bBishop;
+	board[1][7] = bHorse;
+	board[2][7] = bBishop;
 	board[3][7] = bQueen;
 	board[4][7] = bKing;
-	//board[5][7] = bBishop;
-	//board[6][7] = bHorse;
+	board[5][7] = bBishop;
+	board[6][7] = bHorse;
 	board[7][7] = bRook;
 }
 
@@ -419,4 +424,145 @@ bool Position::isTileThreatened(Tile tile, int enemyColor)
 	}
 
 	return false;
+}
+
+MinMaxReturn Position::minMax(int depth)
+{
+	MinMaxReturn returnValue;
+
+	std::list<Move> moves;
+	getLegalMoves(moves);
+
+
+	// Rekursion kantatapaus 1: peli on loppu koska laillisia siirtoja ei ole.
+	if (moves.size() == 0)
+	{
+		returnValue._evaluationValue = endResult();
+		return returnValue;
+	}
+
+	// Rekursion kantatapaus 2: katkaisusyvyydessä
+	if (depth == 0)
+	{
+		returnValue._evaluationValue = evaluate();
+		return returnValue;
+	}
+
+	// Rekursioaskel: kokeillaan jokaista laillista siirtoa s
+	// (alustetaan paluuarvo huonoimmaksi mahdolliseksi).
+
+	int turn = getTurn();
+
+	returnValue._evaluationValue = (turn ? 1000000 : -1000000);
+	for (auto move : moves)
+	{
+		// Seuraaja-asema (tehdään nykyisessä asemassa siirto s).
+		Position newPosition = *this;
+		newPosition.updatePosition(&move, false);
+
+		// Rekursiivinen kutsu.
+		MinMaxReturn value = newPosition.minMax(depth - 1);
+
+		// Tutkitaan ollaan löydetty uusi paras siirto.
+		if ((turn && value._evaluationValue < returnValue._evaluationValue) || 
+			!turn && value._evaluationValue > returnValue._evaluationValue)
+		{
+			// Löydettiin uusi paras siirto.
+			returnValue._evaluationValue = value._evaluationValue;
+			returnValue._bestMove = move;
+		}
+	}
+	return returnValue;
+}
+
+
+double Position::endResult()
+{
+	// Asemassa ei ole enää laillisia siirtoja. Etsitään siirtovuoroisen pelaajan
+	// kuningas; jos kuningas on uhattu, on pelaaja hävinnyt (muuten tasapeli, "patti").
+
+	int turn = getTurn();
+
+	// Kuninkaan sijainti (x,y).
+	ChessPiece * king = turn ? bKing : wKing;
+	int kx, ky;
+	for (int x = 0; x < 8; ++x)
+	{
+		for (int y = 0; y < 8; ++y)
+		{
+			if (board[x][y] == king)
+			{
+				kx = x;
+				ky = y;
+			}
+		}
+	}
+
+	if (isTileThreatened(Tile(kx, ky), !turn))
+		return 0; // tasapeli (patti)
+	else
+		return turn ? 1000000 : -1000000;	// matti
+}
+
+
+/*
+	Aseman numeerinen arviointi eri tekijöiden perusteella, esim.
+
+	1. Nappuloiden arvo ("materiaali")
+		Daami = 9
+		Torni = 5
+		Lähetti = 3,25
+		Ratsu = 3
+		Sotilas = 1
+
+	2. Kuninkaan turvallisuus/hyvyys
+		Jos avaus tai keskipeli, niin hyvä että kunigas g1 tai b1/c1
+		Loppupelissä vaikea sanoa halutaanko olla auttamassa omaa sotilasta korottumaan
+		vai olla estämässä vastustajan korotusta siksi ei oteta kantaa.
+
+	3. Sentralisaatio (keskustan hallinta)
+		Nappulat ovat yleensä paremmin laudan keskellä kuin laidoilla.
+
+	4. Linjojen hallinta
+		Tornit sijaitsevat hyvin avoimilla linjoilla (= linja jolla ei ole yhtään omaa sotilasta).
+
+	jne. jne.
+*/
+double Position::evaluate()
+{
+	// Vakiokertoimet kuvaavat eri tekijöiden tärkeyttä suhteessa toisiinsa.
+	// Kertoimien asettaminen edellyttää testaamista ja sovellusalueen (shakki)
+	// osaamista. Tässä materiaalin tärkeydeksi on asetettu 1. Muiden tekijöiden
+	// kertoimet ovat yleensä tätä pienempiä, koska materiaali on kaikkein
+	// tärkein yksittäinen tekijä.
+	const double materialMultiplier = 1.0;
+
+	// Materiaali
+	double material = calculateMaterialValue();
+
+	// Palautetaan eri tekijöiden painotettu summa.
+	return materialMultiplier * material; // + linjaKerroin * linjat + ... jne
+}
+
+
+double Position::calculateMaterialValue()
+{
+	double whiteValue = 0;
+	double blackValue = 0;
+
+	for (int x = 0; x < 8; x++) 
+	{
+		for (int y = 0; y < 8; y++) 
+		{
+			if (board[x][y] != NULL)
+			{
+				if (board[x][y]->getColor())
+					blackValue += board[x][y]->getValue();
+				else
+					whiteValue += board[x][y]->getValue();
+			}
+		}
+	}
+
+	return whiteValue - blackValue;
 }

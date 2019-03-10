@@ -36,6 +36,9 @@
     <ClCompile Include="MoveStack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MinMaxReturn.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChessPiece.h">

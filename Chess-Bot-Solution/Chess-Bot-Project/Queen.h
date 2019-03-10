@@ -8,7 +8,7 @@ class Queen : public Bishop, public Rook
 {
 public:
 
-	Queen(std::wstring unicode, int color, int code) : ChessPiece(unicode, color, code), Bishop(unicode, color, code), Rook(unicode, color, code) {}
+	Queen(std::wstring unicode, int color, int code, double value) : ChessPiece(unicode, color, code, value), Bishop(unicode, color, code, value), Rook(unicode, color, code, value) {}
 
 	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
 	{

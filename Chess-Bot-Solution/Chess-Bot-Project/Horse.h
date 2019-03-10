@@ -6,7 +6,7 @@ class Horse : public ChessPiece
 {
 public:
 
-	Horse(std::wstring unicode, int color, int code) : ChessPiece(unicode, color, code) {}
+	Horse(std::wstring unicode, int color, int code, double value) : ChessPiece(unicode, color, code, value) {}
 
 	//Horse possible moves
 	int moves[8][2] = {

@@ -157,6 +157,7 @@
     <ClCompile Include="ChessPiece.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="MinMaxReturn.h" />
     <ClCompile Include="Move.cpp" />
     <ClCompile Include="MoveStack.cpp" />
     <ClCompile Include="Position.cpp">

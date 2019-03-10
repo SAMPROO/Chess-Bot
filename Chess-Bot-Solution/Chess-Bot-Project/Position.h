@@ -1,6 +1,7 @@
 #pragma once
 #include "ChessPiece.h"
 #include "MoveStack.h"
+#include "MinMaxReturn.h"
 
 //class MoveStack;
 
@@ -40,4 +41,9 @@ public:
 	bool isTileThreatened(Tile tile, int color);
 
 	MoveStack * _moveStack;
+
+	double endResult();									// Peli on p‰‰ttynyt, kumpi voitti?
+	double evaluate();										// Aseman numeerinen arviointi.
+	MinMaxReturn minMax(int depth);						// Minimax-algoritmi.
+	double calculateMaterialValue();						// Nappuloiden yhteenlaskettu arvo.
 };
