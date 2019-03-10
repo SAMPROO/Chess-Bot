@@ -22,10 +22,13 @@ public:
 	int getTurn();
 	void changeTurn();
 
-	Move _move;
-	ChessPiece * _capturedPiece = NULL;
-	ChessPiece * _enPassant = NULL;
-	ChessPiece * _upgradedFrom = NULL;
+	Move getMove();
+	ChessPiece * getCapturedPiece();
+	ChessPiece * getEnPassant();
+	ChessPiece * getPromotedFrom();
+
+	void setCapturedPiece(ChessPiece * capturedPiece);
+	void setEnPassant(ChessPiece * enPassant);
 
 private:
 	MoveStack* _top;
@@ -34,4 +37,9 @@ private:
 	bool castlingBools[6] = { 0,0,0,0,0,0 };
 
 	int _turn = 0;
+
+	Move _move;
+	ChessPiece * _capturedPiece = NULL;
+	ChessPiece * _enPassant = NULL;
+	ChessPiece * _promotedFrom = NULL;
 };

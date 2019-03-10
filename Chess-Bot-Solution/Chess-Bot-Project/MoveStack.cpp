@@ -1,7 +1,7 @@
 #include "MoveStack.h"
 
 MoveStack::MoveStack() {
-	_top = NULL;
+	//_top = NULL;
 }
 
 MoveStack::~MoveStack() {
@@ -71,4 +71,43 @@ void MoveStack::changeTurn()
 {
 	if (isEmpty() == false)
 		_top->_turn = !_top->_turn;
+}
+
+Move MoveStack::getMove()
+{
+	return _top->_move;
+}
+
+ChessPiece * MoveStack::getCapturedPiece()
+{
+	if (isEmpty())
+		return NULL;
+
+	return _top->_capturedPiece;
+}
+
+ChessPiece * MoveStack::getEnPassant()
+{
+	if (isEmpty())
+		return NULL;
+
+	return _top->_enPassant;
+}
+
+ChessPiece * MoveStack::getPromotedFrom()
+{
+	if (isEmpty())
+		return NULL;
+
+	return _top->_promotedFrom;
+}
+
+void MoveStack::setCapturedPiece(ChessPiece * capturedPiece)
+{
+	_top->_capturedPiece = capturedPiece;
+}
+
+void MoveStack::setEnPassant(ChessPiece * enPassant)
+{
+	_top->_enPassant = enPassant;
 }

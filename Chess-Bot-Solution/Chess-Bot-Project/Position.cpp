@@ -127,10 +127,10 @@ void Position::updatePosition(Move* move, bool realMove)
 				break;
 			}
 
-			_moveStack->peak()->_capturedPiece = board[destinationColumn][destinationRow];
+			_moveStack->setCapturedPiece(board[destinationColumn][destinationRow]);
 			
 			if (move->isEnPassant())
-				_moveStack->peak()->_enPassant = board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)];
+				_moveStack->setEnPassant(board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)]);
 
 			if (move->isPromoted())
 			{
@@ -183,9 +183,7 @@ void Position::undoMove()
 	if (_moveStack->isEmpty())
 		return;
 
-	Move move = _moveStack->peak()->_move;
-
-	_moveStack->pop();
+	Move move = _moveStack->getMove();
 
 	int row = getTurn() ? 7 : 0;
 
@@ -218,14 +216,16 @@ void Position::undoMove()
 		if (move.isPromoted() == false)
 			board[originColumn][originRow] = board[destinationColumn][destinationRow];
 		else
-			board[originColumn][originRow] = getTurn() ? bPawn : wPawn;
+			board[originColumn][originRow] = !getTurn() ? bPawn : wPawn;
 
 
-		board[destinationColumn][destinationRow] = _moveStack->peak()->_capturedPiece;
+		board[destinationColumn][destinationRow] = _moveStack->getCapturedPiece();
 		
 		if (move.isEnPassant())
-			board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = _moveStack->peak()->_enPassant;
+			board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = _moveStack->getEnPassant();
 	}
+
+	_moveStack->pop();
 }
 
 int Position::getTurn()
@@ -367,7 +367,7 @@ void Position::addEnPassant(std::list<Move>& moves)
 	if (_moveStack->isEmpty())
 		return;
 
-	Move lastMove = _moveStack->peak()->_move;
+	Move lastMove = _moveStack->getMove();
 	if (lastMove.getOrigin().getRow() != (!getTurn() ? 6 : 1))
 		return;
 
