@@ -127,10 +127,10 @@ void Position::updatePosition(Move* move, bool realMove)
 				break;
 			}
 
-			_moveStack->_capturedPiece = board[destinationColumn][destinationRow];
+			_moveStack->peak()->_capturedPiece = board[destinationColumn][destinationRow];
 			
 			if (move->isEnPassant())
-				_moveStack->_enPassant = board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)];
+				_moveStack->peak()->_enPassant = board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)];
 
 			if (move->isPromoted())
 			{
@@ -221,10 +221,10 @@ void Position::undoMove()
 			board[originColumn][originRow] = getTurn() ? bPawn : wPawn;
 
 
-		board[destinationColumn][destinationRow] = _moveStack->_capturedPiece;
+		board[destinationColumn][destinationRow] = _moveStack->peak()->_capturedPiece;
 		
 		if (move.isEnPassant())
-			board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = _moveStack->_enPassant;
+			board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = _moveStack->peak()->_enPassant;
 	}
 }
 
