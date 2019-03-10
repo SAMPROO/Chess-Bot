@@ -3,6 +3,8 @@
 #include "MoveStack.h"
 #include "MinMaxReturn.h"
 
+using namespace std;
+
 //class MoveStack;
 
 class Position {
@@ -29,21 +31,23 @@ public:
 	void setShortRookMoved();
 	void setLongRookMoved();
 
-	void getLegalMoves(std::list<Move>& list);
-	void getRawMoves(std::list<Move>& moves, int color);
+	void getLegalMoves(std::list<Move>& moves, int turn);
+	void getRawMoves(std::list<Move>& moves, int turn);
 
-	void isCheck(std::list<Move>& moves);
+	void isCheck(std::list<Move>& moves, int turn);
 
-	void addCastling(std::list<Move>& moves);
-	void addEnPassant(std::list<Move>& moves);
+	void addCastling(std::list<Move>& moves, int turn);
+	void addEnPassant(std::list<Move>& moves, int turn);
 	
 
 	bool isTileThreatened(Tile tile, int color);
 
 	MoveStack * _moveStack;
 
-	double endResult();									// Peli on p‰‰ttynyt, kumpi voitti?
-	double evaluate();										// Aseman numeerinen arviointi.
-	MinMaxReturn minMax(int depth);						// Minimax-algoritmi.
-	double calculateMaterialValue();						// Nappuloiden yhteenlaskettu arvo.
+	double endResult(int turn);
+	double evaluate();
+	MinMaxReturn minimax(int depth, double alpha, double beta, int turn);
+	double calculateMaterialValue();
+	
+	double inf = numeric_limits<double>::infinity();
 };

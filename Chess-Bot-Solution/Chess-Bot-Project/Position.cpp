@@ -6,8 +6,6 @@
 #include "Queen.h"
 #include "Pawn.h"
 
-using namespace std;
-
 const double 	kingValue	=	100, 
 				queenValue	=	9, 
 				rookValue	=	5, 
@@ -273,15 +271,15 @@ void Position::setLongRookMoved()
 	_moveStack->setCastlingBools(4 + getTurn(), true);
 }
 
-void Position::getLegalMoves(std::list<Move>& moves)
+void Position::getLegalMoves(std::list<Move>& moves, int turn)
 {
-	getRawMoves(moves, getTurn());
-	addEnPassant(moves);
-	addCastling(moves);
-	isCheck(moves);
+	getRawMoves(moves, turn);
+	addEnPassant(moves, turn);
+	addCastling(moves, turn);
+	isCheck(moves, turn);
 }
 
-void Position::getRawMoves(std::list<Move>& moves, int color)
+void Position::getRawMoves(std::list<Move>& moves, int turn)
 {
 	for (int i = 0; i < 8; i++)
 	{
@@ -289,15 +287,15 @@ void Position::getRawMoves(std::list<Move>& moves, int color)
 		{
 			ChessPiece * chessPiece = board[j][i];
 
-			if (chessPiece != NULL && chessPiece->getColor() == color)
+			if (chessPiece != NULL && chessPiece->getColor() == turn)
 			{
-				chessPiece->getMoves(moves, &Tile(i, j), this, color);
+				chessPiece->getMoves(moves, &Tile(i, j), this, turn);
 			}
 		}
 	}
 }
 
-void Position::isCheck(std::list<Move>& moves)
+void Position::isCheck(std::list<Move>& moves, int turn)
 {
 	Tile king;
 	for (int i = 0; i < 8; i++)
@@ -323,7 +321,7 @@ void Position::isCheck(std::list<Move>& moves)
 
 		Tile kingTile = move.getOrigin() == king ? move.getDestination() : king;
 
-		if (newPosition.isTileThreatened(kingTile, !getTurn()) == false)
+		if (newPosition.isTileThreatened(kingTile, !turn) == false)
 		{
 			safeMoves.push_back(move);
 		}
@@ -332,7 +330,7 @@ void Position::isCheck(std::list<Move>& moves)
 	moves = safeMoves;
 }
 
-void Position::addCastling(std::list<Move>& moves)
+void Position::addCastling(std::list<Move>& moves, int turn)
 {
 	//// Linnoituksien huomioiminen
 	//// 1. Kuningas ei saa olla liikkunut
@@ -341,47 +339,47 @@ void Position::addCastling(std::list<Move>& moves)
 	//// 4. Ruutujen pitää olla tyhjät
 	//// 5. Ruudut eivät saa olla uhattuja
 
-	int row = getTurn() ? 7 : 0;
+	int row = turn ? 7 : 0;
 
-	if (getKingMoved(getTurn()) == false && isTileThreatened(Tile(row, 4), !getTurn()) == false)
+	if (getKingMoved(turn) == false && isTileThreatened(Tile(row, 4), !turn) == false)
 	{
 		// short rook
-		if (getShortRookMoved(getTurn()) == false
+		if (getShortRookMoved(turn) == false
 			&& board[5][row] == NULL 
 			&& board[6][row] == NULL
-			&& isTileThreatened(Tile(row, 5), !getTurn()) == false
-			&& isTileThreatened(Tile(row, 6), !getTurn()) == false)
+			&& isTileThreatened(Tile(row, 5), !turn) == false
+			&& isTileThreatened(Tile(row, 6), !turn) == false)
 
 			moves.push_back(Move(true, false));		
 
 		// long rook
-		if (getLongRookMoved(getTurn()) == false
+		if (getLongRookMoved(turn) == false
 			&& board[3][row] == NULL 
 			&& board[2][row] == NULL
 			&& board[1][row] == NULL
-			&& isTileThreatened(Tile(row, 3), !getTurn()) == false
-			&& isTileThreatened(Tile(row, 2), !getTurn()) == false)
+			&& isTileThreatened(Tile(row, 3), !turn) == false
+			&& isTileThreatened(Tile(row, 2), !turn) == false)
 			
 			moves.push_back(Move(false, true));
 	}
 	
 }
 
-void Position::addEnPassant(std::list<Move>& moves)
+void Position::addEnPassant(std::list<Move>& moves, int turn)
 {
 	if (_moveStack->isEmpty())
 		return;
 
 	Move lastMove = _moveStack->getMove();
-	if (lastMove.getOrigin().getRow() != (!getTurn() ? 6 : 1))
+	if (lastMove.getOrigin().getRow() != (!turn ? 6 : 1))
 		return;
 
 	Tile lastDestination = lastMove.getDestination();
-	if (lastDestination.getRow() != (!getTurn() ? 4 : 3))
+	if (lastDestination.getRow() != (!turn ? 4 : 3))
 		return;
 
 	ChessPiece * lastPiece = board[lastDestination.getColumn()][lastDestination.getRow()];
-	if (lastPiece->getCode() != (!getTurn() ? BP : WP))
+	if (lastPiece != NULL && lastPiece->getCode() != (!turn ? BP : WP))
 		return;
 
 	for (int i = 0; i < 2; i++)
@@ -391,11 +389,11 @@ void Position::addEnPassant(std::list<Move>& moves)
 		if (column < 0 || column > 7)
 			continue;
 
-		ChessPiece * chessPiece = board[column][!getTurn() ? 4 : 3];
-		if (chessPiece != NULL && chessPiece->getCode() == (getTurn() ? BP : WP))
+		ChessPiece * chessPiece = board[column][!turn ? 4 : 3];
+		if (chessPiece != NULL && chessPiece->getCode() == (turn ? BP : WP))
 		{
-			Tile origin = Tile(!getTurn() ? 4 : 3, column);
-			Tile destination = Tile(lastDestination.getRow() + (getTurn() ? -1 : 1), lastDestination.getColumn());
+			Tile origin = Tile(!turn ? 4 : 3, column);
+			Tile destination = Tile(lastDestination.getRow() + (turn ? -1 : 1), lastDestination.getColumn());
 
 			moves.push_back(Move(origin, destination, true));
 		}
@@ -426,18 +424,18 @@ bool Position::isTileThreatened(Tile tile, int enemyColor)
 	return false;
 }
 
-MinMaxReturn Position::minMax(int depth)
+MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn)
 {
 	MinMaxReturn returnValue;
 
 	std::list<Move> moves;
-	getLegalMoves(moves);
+	getLegalMoves(moves, turn);
 
 
 	// Rekursion kantatapaus 1: peli on loppu koska laillisia siirtoja ei ole.
 	if (moves.size() == 0)
 	{
-		returnValue._evaluationValue = endResult();
+		returnValue._evaluationValue = endResult(turn);
 		return returnValue;
 	}
 
@@ -448,12 +446,10 @@ MinMaxReturn Position::minMax(int depth)
 		return returnValue;
 	}
 
-	// Rekursioaskel: kokeillaan jokaista laillista siirtoa s
-	// (alustetaan paluuarvo huonoimmaksi mahdolliseksi).
+	// alustetaan paluuarvo huonoimmaksi mahdolliseksi.
+	returnValue._evaluationValue = (turn ? inf : -inf);
 
-	int turn = getTurn();
-
-	returnValue._evaluationValue = (turn ? 1000000 : -1000000);
+	// Rekursioaskel: kokeillaan jokaista laillista siirtoa
 	for (auto move : moves)
 	{
 		// Seuraaja-asema (tehdään nykyisessä asemassa siirto s).
@@ -461,7 +457,7 @@ MinMaxReturn Position::minMax(int depth)
 		newPosition.updatePosition(&move, false);
 
 		// Rekursiivinen kutsu.
-		MinMaxReturn value = newPosition.minMax(depth - 1);
+		MinMaxReturn value = newPosition.minimax(depth - 1, alpha, beta, !turn);
 
 		// Tutkitaan ollaan löydetty uusi paras siirto.
 		if ((turn && value._evaluationValue < returnValue._evaluationValue) || 
@@ -470,18 +466,25 @@ MinMaxReturn Position::minMax(int depth)
 			// Löydettiin uusi paras siirto.
 			returnValue._evaluationValue = value._evaluationValue;
 			returnValue._bestMove = move;
-		}
+
+			// Alpha-Beta:
+			if (turn)
+				beta = fmin(beta, value._evaluationValue);
+			else
+				alpha = fmax(alpha, value._evaluationValue);
+
+			if (beta <= alpha)
+				break;
+		}		
 	}
 	return returnValue;
 }
 
 
-double Position::endResult()
+double Position::endResult(int turn)
 {
 	// Asemassa ei ole enää laillisia siirtoja. Etsitään siirtovuoroisen pelaajan
 	// kuningas; jos kuningas on uhattu, on pelaaja hävinnyt (muuten tasapeli, "patti").
-
-	int turn = getTurn();
 
 	// Kuninkaan sijainti (x,y).
 	ChessPiece * king = turn ? bKing : wKing;
