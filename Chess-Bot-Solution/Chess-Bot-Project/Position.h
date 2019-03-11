@@ -18,6 +18,9 @@ public:
 	static ChessPiece *wKing, *wQueen, *wRook, *wBishop, *wHorse, *wPawn;	// Valkeat nappulat.
 	static ChessPiece *bKing, *bQueen, *bRook, *bBishop, *bHorse, *bPawn;	// Mustat nappulat.
 
+	Tile* _whiteKing;
+	Tile* _blackKing;
+
 	void updatePosition(Move* move, bool realMove = true);
 	void undoMove();
 

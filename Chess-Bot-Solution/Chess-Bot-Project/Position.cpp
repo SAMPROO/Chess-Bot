@@ -6,6 +6,8 @@
 #include "Queen.h"
 #include "Pawn.h"
 
+#include <chrono>
+
 const double 	kingValue	=	4, 
 				queenValue	=	9, 
 				rookValue	=	5, 
@@ -60,6 +62,9 @@ Position::Position(MoveStack * moveStack) {
 	board[5][7] = bBishop;
 	board[6][7] = bHorse;
 	board[7][7] = bRook;
+
+	_whiteKing = &Tile(0, 4);
+	_blackKing = &Tile(7, 4);
 }
 
 void Position::updatePosition(Move* move, bool realMove)
@@ -67,7 +72,8 @@ void Position::updatePosition(Move* move, bool realMove)
 	if (realMove)
 		_moveStack->push(*move);
 
-	int row = getTurn() ? 7 : 0;
+	int turn = getTurn();
+	int row = turn ? 7 : 0;
 
 	// Short Rook
 	if (move->isShortRook()) {
@@ -81,6 +87,12 @@ void Position::updatePosition(Move* move, bool realMove)
 			setShortRookMoved();
 			setKingMoved();
 		}
+
+		if (turn)
+			_blackKing = &Tile(row, 6);
+		else
+			_whiteKing = &Tile(row, 6);
+		
 	}
 	// Long Rook
 	else if (move->isLongRook()) {
@@ -95,6 +107,10 @@ void Position::updatePosition(Move* move, bool realMove)
 			setKingMoved();
 		}
 		
+		if (turn)
+			_blackKing = &Tile(row, 2);
+		else
+			_whiteKing = &Tile(row, 2);
 	}
 	// Normal move
 	else 
@@ -109,12 +125,16 @@ void Position::updatePosition(Move* move, bool realMove)
 		int originColumn = tileOrigin.getColumn();
 
 		ChessPiece * chessPiece = board[originColumn][originRow];
+		auto pieceCode = chessPiece->getCode();
 
-		// removed if (chessPiece != NULL)
+		if (pieceCode == BK)
+			_blackKing = &tileDestination;
+		else if (pieceCode == WK)
+			_whiteKing = &tileDestination;
 
 		if (realMove)
 		{
-			switch (chessPiece->getCode())
+			switch (pieceCode)
 			{
 			case BR:
 			case WR:
@@ -133,14 +153,14 @@ void Position::updatePosition(Move* move, bool realMove)
 			_moveStack->setCapturedPiece(board[destinationColumn][destinationRow]);
 			
 			if (move->isEnPassant())
-				_moveStack->setEnPassant(board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)]);
+				_moveStack->setEnPassant(board[destinationColumn][destinationRow + (turn ? 1 : -1)]);
 
 			if (move->isPromoted())
 			{
-				wstring Q = getTurn() ? bQueen->getUnicode() : wQueen->getUnicode();
-				wstring H = getTurn() ? bHorse->getUnicode() : wHorse->getUnicode();
-				wstring R = getTurn() ? bRook->getUnicode() : wRook->getUnicode();
-				wstring B = getTurn() ? bBishop->getUnicode() : wBishop->getUnicode();
+				wstring Q = turn ? bQueen->getUnicode() : wQueen->getUnicode();
+				wstring H = turn ? bHorse->getUnicode() : wHorse->getUnicode();
+				wstring R = turn ? bRook->getUnicode() : wRook->getUnicode();
+				wstring B = turn ? bBishop->getUnicode() : wBishop->getUnicode();
 
 				wcout << "\n" << Q << " " << H << " " << R << " " << B
 					<< "\nQ H R B" 
@@ -155,23 +175,23 @@ void Position::updatePosition(Move* move, bool realMove)
 				switch (selection)
 				{
 				case 'q':
-					chessPiece = getTurn() ? bQueen : wQueen;
+					chessPiece = turn ? bQueen : wQueen;
 					break;
 				case 'h':
-					chessPiece = getTurn() ? bHorse : wHorse;
+					chessPiece = turn ? bHorse : wHorse;
 					break;
 				case 'r':
-					chessPiece = getTurn() ? bRook : wRook;
+					chessPiece = turn ? bRook : wRook;
 					break;
 				case 'b':
-					chessPiece = getTurn() ? bBishop : wBishop;
+					chessPiece = turn ? bBishop : wBishop;
 					break;
 				}
 			}
 		}
 
 		if (move->isEnPassant())
-			board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = NULL;
+			board[destinationColumn][destinationRow + (turn ? 1 : -1)] = NULL;
 
 		board[destinationColumn][destinationRow] = chessPiece;
 		board[originColumn][originRow] = NULL;
@@ -189,6 +209,7 @@ void Position::undoMove()
 	Move move = _moveStack->getMove();
 
 	int row = getTurn() ? 7 : 0;
+	int turn = getTurn();
 
 	// Undo short Rook
 	if (move.isShortRook()) {
@@ -196,6 +217,11 @@ void Position::undoMove()
 		board[6][row] = NULL; // Clear old position
 		board[7][row] = board[5][row]; // Rook to new position
 		board[5][row] = NULL; // Clear old position
+
+		if (turn)
+			_blackKing = &Tile(row, 4);
+		else
+			_whiteKing = &Tile(row, 4);
 	}
 	// Undo long Rook
 	else if (move.isLongRook()) {
@@ -203,6 +229,11 @@ void Position::undoMove()
 		board[2][row] = NULL; // Clear old position
 		board[0][row] = board[3][row]; // Rook to new position
 		board[3][row] = NULL; // Clear old position
+
+		if (turn)
+			_blackKing = &Tile(row, 4);
+		else
+			_whiteKing = &Tile(row, 4);
 	}
 	// Undo normal move
 	else
@@ -219,13 +250,20 @@ void Position::undoMove()
 		if (move.isPromoted() == false)
 			board[originColumn][originRow] = board[destinationColumn][destinationRow];
 		else
-			board[originColumn][originRow] = !getTurn() ? bPawn : wPawn;
+			board[originColumn][originRow] = !turn ? bPawn : wPawn;
 
 
 		board[destinationColumn][destinationRow] = _moveStack->getCapturedPiece();
 		
 		if (move.isEnPassant())
-			board[destinationColumn][destinationRow + (getTurn() ? 1 : -1)] = _moveStack->getEnPassant();
+			board[destinationColumn][destinationRow + (turn ? 1 : -1)] = _moveStack->getEnPassant();
+
+		auto pieceCode = board[originColumn][originRow]->getCode();
+
+		if (pieceCode == BK)
+			_blackKing = &tileOrigin;
+		else if (pieceCode == WK)
+			_whiteKing = &tileOrigin;
 	}
 
 	_moveStack->pop();
@@ -273,10 +311,44 @@ void Position::setLongRookMoved()
 
 void Position::getLegalMoves(std::list<Move>& moves, int turn)
 {
+	auto begin = chrono::high_resolution_clock::now();
+
 	getRawMoves(moves, turn);
+
+	auto end = chrono::high_resolution_clock::now();
+	auto dur = end - begin;
+	auto ms1 = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+	wcout << "\nRAW Duration: " << ms1 << endl;
+	////
+	 begin = chrono::high_resolution_clock::now();
+
 	addEnPassant(moves, turn);
+
+	 end = chrono::high_resolution_clock::now();
+	 dur = end - begin;
+	auto ms2 = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+	wcout << "PASSANT Duration: " << ms2 << endl;
+	////
+	 begin = chrono::high_resolution_clock::now();
+
 	addCastling(moves, turn);
+
+	 end = chrono::high_resolution_clock::now();
+	 dur = end - begin;
+	auto ms3 = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+	wcout << "CASTLING Duration: " << ms3 << endl; 
+	////
+	 begin = chrono::high_resolution_clock::now();
+
 	isCheck(moves, turn);
+
+	 end = chrono::high_resolution_clock::now();
+	 dur = end - begin;
+	auto ms4 = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+	wcout << "CHECK Duration: " << ms4 << endl;
+
+	
+	wcout << "DURATION: " << ms1 + ms2 + ms3 + ms4 << endl << endl;
 }
 
 void Position::getRawMoves(std::list<Move>& moves, int turn)
@@ -297,8 +369,8 @@ void Position::getRawMoves(std::list<Move>& moves, int turn)
 
 void Position::isCheck(std::list<Move>& moves, int turn)
 {
-	Tile king;
-	for (int i = 0; i < 8; i++)
+	Tile king = turn ? *_blackKing : *_whiteKing;
+	/*for (int i = 0; i < 8; i++)
 	{
 		for (int j = 0; j < 8; j++)
 		{
@@ -309,7 +381,7 @@ void Position::isCheck(std::list<Move>& moves, int turn)
 				king = Tile(j, i);
 			}
 		}
-	}	
+	}	*/
 
 	std::list<Move> safeMoves;
 
@@ -429,8 +501,8 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 	MinMaxReturn returnValue;
 
 	std::list<Move> moves;
+	
 	getLegalMoves(moves, turn);
-
 
 	// Rekursion kantatapaus 1: peli on loppu koska laillisia siirtoja ei ole.
 	if (moves.size() == 0)
@@ -487,7 +559,8 @@ double Position::endResult(int turn)
 	// kuningas; jos kuningas on uhattu, on pelaaja hävinnyt (muuten tasapeli, "patti").
 
 	// Kuninkaan sijainti (x,y).
-	ChessPiece * king = turn ? bKing : wKing;
+	Tile king = turn ? *_blackKing : *_whiteKing;
+	/*ChessPiece * king = turn ? bKing : wKing;
 	int kx, ky;
 	for (int x = 0; x < 8; ++x)
 	{
@@ -499,9 +572,9 @@ double Position::endResult(int turn)
 				ky = y;
 			}
 		}
-	}
+	}*/
 
-	if (isTileThreatened(Tile(kx, ky), !turn))
+	if (isTileThreatened(/*Tile(kx, ky)*/king, !turn))
 		return 0; // tasapeli (patti)
 	else
 		return turn ? 1000000 : -1000000;	// matti
