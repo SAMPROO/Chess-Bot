@@ -1,15 +1,17 @@
 #include "Move.h"
 
-Move::Move(Tile origin, Tile destination, bool enPassant, bool promoted) {
+Move::Move(Tile origin, Tile destination, int piece, bool enPassant, bool promoted) {
 	_origin = origin;
 	_destination = destination;
 	_enPassant = enPassant;
 	_promoted = promoted;
+	_piece = piece;
 }
 
-Move::Move(bool shortRook, bool longRook) {
+Move::Move(bool shortRook, bool longRook, int piece) {
 	_shortRook = shortRook;
 	_longRook = longRook;
+	_piece = piece;
 }
 
 bool Move::operator==(const Move & rhs) const

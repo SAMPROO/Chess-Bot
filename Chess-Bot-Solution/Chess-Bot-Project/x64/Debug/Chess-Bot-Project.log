@@ -1,2 +1,11 @@
 ﻿  Chess-Bot-Project.cpp
-  Chess-Bot-Project.vcxproj -> C:\GitHub\Chess-Bot\Chess-Bot-Solution\x64\Debug\Chess-Bot-Project.exe
+  ChessPiece.cpp
+  MinMaxReturn.h
+  Move.cpp
+  MoveStack.cpp
+  Position.cpp
+  Tile.cpp
+  UI.cpp
+  Generating Code...
+g:\chessbot\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(814): warning C4715: 'getGameTableValue': not all control paths return a value
+  Chess-Bot-Project.vcxproj -> G:\ChessBot\Chess-Bot\Chess-Bot-Solution\x64\Debug\Chess-Bot-Project.exe

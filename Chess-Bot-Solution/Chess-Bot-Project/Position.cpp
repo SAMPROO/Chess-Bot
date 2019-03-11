@@ -310,46 +310,39 @@ void Position::setLongRookMoved()
 	_moveStack->setCastlingBools(4 + getTurn(), true);
 }
 
-void Position::getLegalMoves(std::list<Move>& moves, int turn)
+//enum startOrder { R, H, B, Q, K, P, Sr, Lr };
+
+				  // R, H, B, Q, K, P, 0-0, 0-0-0
+int sortList1[8] = { 7, 1, 2, -1, 6, 0, 5, 4 };
+int sortList2[8] = { 7, 1, 2, -1, 6, 0, 5, 4 };
+
+bool inEndGamePhase;
+
+bool my_compare(Move &a, Move &b)
 {
-	//auto begin = chrono::high_resolution_clock::now();
+	switch (inEndGamePhase)
+	{
+	case 0:
+		return sortList1[a._piece] < sortList1[b._piece];
+	case 1:
+		return sortList2[a._piece] < sortList1[b._piece];
+	}	
+}
 
+void Position::getLegalMoves(list<Move>& moves, int turn)
+{
 	getRawMoves(moves, turn);
-
-	//auto end = chrono::high_resolution_clock::now();
-	//auto dur = end - begin;
-	//auto ms1 = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
-	//wcout << "\nRAW Duration: " << ms1 << endl;
-	//////
-	// begin = chrono::high_resolution_clock::now();
-
 	addEnPassant(moves, turn);
-
-	// end = chrono::high_resolution_clock::now();
-	// dur = end - begin;
-	//auto ms2 = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
-	//wcout << "PASSANT Duration: " << ms2 << endl;
-	//////
-	// begin = chrono::high_resolution_clock::now();
-
 	addCastling(moves, turn);
-
-	// end = chrono::high_resolution_clock::now();
-	// dur = end - begin;
-	//auto ms3 = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
-	//wcout << "CASTLING Duration: " << ms3 << endl; 
-	//////
-	// begin = chrono::high_resolution_clock::now();
-
 	isCheck(moves, turn);
 
-	// end = chrono::high_resolution_clock::now();
-	// dur = end - begin;
-	//auto ms4 = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
-	//wcout << "CHECK Duration: " << ms4 << endl;
+	auto temp = calculateMaterialValue();
+	double whiteMaterial = temp.first;
+	double blackMaterial = temp.second;
 
-	//
-	//wcout << "DURATION: " << ms1 + ms2 + ms3 + ms4 << endl << endl;
+	inEndGamePhase = (turn ? blackMaterial : whiteMaterial) <= (pieceCombinedValue / 2);
+
+	moves.sort(my_compare);
 }
 
 void Position::getRawMoves(std::list<Move>& moves, int turn)
@@ -425,7 +418,7 @@ void Position::addCastling(std::list<Move>& moves, int turn)
 			&& isTileThreatened(Tile(row, 5), !turn) == false
 			&& isTileThreatened(Tile(row, 6), !turn) == false)
 
-			moves.push_back(Move(true, false));		
+			moves.push_back(Move(true, false, 6));		
 
 		// long rook
 		if (getLongRookMoved(turn) == false
@@ -435,7 +428,7 @@ void Position::addCastling(std::list<Move>& moves, int turn)
 			&& isTileThreatened(Tile(row, 3), !turn) == false
 			&& isTileThreatened(Tile(row, 2), !turn) == false)
 			
-			moves.push_back(Move(false, true));
+			moves.push_back(Move(false, true, 7));
 	}
 	
 }
@@ -517,7 +510,7 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 	// Rekursion kantatapaus 2: katkaisusyvyydessä
 	if (depth == 0)
 	{
-		returnValue._evaluationValue = evaluate(currentMove, turn);
+		returnValue._evaluationValue = evaluate(turn);
 		return returnValue;
 	}
 
@@ -606,7 +599,7 @@ double Position::endResult(int turn)
 
 	jne. jne.
 */
-double Position::evaluate(Move currentMove, int turn)
+double Position::evaluate(int turn)
 {
 	// Vakiokertoimet kuvaavat eri tekijöiden tärkeyttä suhteessa toisiinsa.
 	// Kertoimien asettaminen edellyttää testaamista ja sovellusalueen (shakki)
@@ -624,7 +617,7 @@ double Position::evaluate(Move currentMove, int turn)
 	bool inEndGamePhase = (turn ? blackMaterial : whiteMaterial) <= (pieceCombinedValue / 2);
 
 	double material = whiteMaterial - blackMaterial;
-	double pieceTileValue = calculatePieceTileValue(/*currentMove, turn*/inEndGamePhase);
+	double pieceTileValue = calculatePieceTileValue(inEndGamePhase);
 
 	// Palautetaan eri tekijöiden painotettu summa.
 	return materialMultiplier * material - pieceTileMultiplier * pieceTileValue; // + linjaKerroin * linjat + ... jne

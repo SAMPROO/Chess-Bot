@@ -25,7 +25,7 @@ public:
 			if (n == NULL)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(row, i)));
+				list.push_back(Move(origin, Tile(row, i), 0));
 				continue;
 			}
 
@@ -33,7 +33,7 @@ public:
 			else if (n->getColor() != color)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(row, i)));
+				list.push_back(Move(origin, Tile(row, i), 0));
 			}
 
 			break;
@@ -48,7 +48,7 @@ public:
 			if (n == nullptr)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(row, i)));
+				list.push_back(Move(origin, Tile(row, i), 0));
 				continue;
 			}
 
@@ -56,7 +56,7 @@ public:
 			if (n->getColor() != color)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(row, i)));
+				list.push_back(Move(origin, Tile(row, i), 0));
 			}
 
 			break;
@@ -71,7 +71,7 @@ public:
 			if (n == nullptr)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(i, column)));
+				list.push_back(Move(origin, Tile(i, column), 0));
 				continue;
 			}
 
@@ -79,7 +79,7 @@ public:
 			if (n->getColor() != color)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(i, column)));
+				list.push_back(Move(origin, Tile(i, column), 0));
 			}
 
 			break;
@@ -94,7 +94,7 @@ public:
 			if (n == nullptr)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(i, column)));
+				list.push_back(Move(origin, Tile(i, column), 0));
 				continue;
 			}
 
@@ -102,7 +102,7 @@ public:
 			if (n->getColor() != color)
 			{
 				//Add new location to move list	
-				list.push_back(Move(origin, Tile(i, column)));
+				list.push_back(Move(origin, Tile(i, column), 0));
 			}
 
 			break;

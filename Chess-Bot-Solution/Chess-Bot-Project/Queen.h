@@ -14,5 +14,10 @@ public:
 	{
 		Rook::getMoves(list, tile, position, color);
 		Bishop::getMoves(list, tile, position, color);
+
+		for (auto move : list)
+		{
+			move._piece = 3;
+		}
 	}
 };

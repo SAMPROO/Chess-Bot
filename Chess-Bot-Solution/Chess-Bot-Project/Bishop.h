@@ -29,14 +29,14 @@ public:
 			//Is new location empty?
 			if (n == nullptr)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column)));
+				list.push_back(Move(origin, Tile(new_row, new_column), 2));
 				continue;
 			}
 
 			// Is location occupied by opponent?
 			else if (n->getColor() != color)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column)));
+				list.push_back(Move(origin, Tile(new_row, new_column), 2));
 			}
 
 			break;
@@ -56,14 +56,14 @@ public:
 			//Is new location empty?
 			if (n == nullptr)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column)));
+				list.push_back(Move(origin, Tile(new_row, new_column), 2));
 				continue;
 			}
 
 			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column)));
+				list.push_back(Move(origin, Tile(new_row, new_column), 2));
 			}
 
 			break;
@@ -83,14 +83,14 @@ public:
 			//Is new location empty?
 			if (n == nullptr)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column)));
+				list.push_back(Move(origin, Tile(new_row, new_column), 2));
 				continue;
 			}
 
 			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column)));
+				list.push_back(Move(origin, Tile(new_row, new_column), 2));
 			}
 
 			break;
@@ -110,14 +110,14 @@ public:
 			//Is new location empty?
 			if (n == nullptr)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column)));
+				list.push_back(Move(origin, Tile(new_row, new_column), 2));
 				continue;
 			}
 
 			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column)));
+				list.push_back(Move(origin, Tile(new_row, new_column), 2));
 			}
 
 			break;

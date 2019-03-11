@@ -56,11 +56,11 @@ Move UI::getOpponentMove(string inputOpponentMove)
 
 	if (inputOpponentMove == "0-0")
 	{
-		opponentMove = Move(true, false);
+		opponentMove = Move(true, false, 6);
 	}
 	else if (inputOpponentMove == "0-0-0")
 	{
-		opponentMove = Move(false, true);
+		opponentMove = Move(false, true, 7);
 	}
 	else
 	{
@@ -87,7 +87,7 @@ Move UI::getOpponentMove(string inputOpponentMove)
 			tiles[j] = Tile(rowInt, columnInt);
 		}
 		
-		opponentMove = Move(tiles[0], tiles[1]);
+		opponentMove = Move(tiles[0], tiles[1], 0);
 	}
 
 	return opponentMove;

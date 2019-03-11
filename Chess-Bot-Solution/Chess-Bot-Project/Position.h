@@ -49,7 +49,7 @@ public:
 	MoveStack * _moveStack;
 
 	double endResult(int turn);
-	double evaluate(Move currentMove, int turn);
+	double evaluate(int turn);
 	MinMaxReturn minimax(int depth, double alpha, double beta, int turn, Move currentMove);
 	pair<double, double> calculateMaterialValue();
 	double calculatePieceTileValue(/*Move currentMove, int turn*/bool materialValue);

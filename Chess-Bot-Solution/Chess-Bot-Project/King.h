@@ -46,14 +46,14 @@ public:
 			if (n == NULL)
 			{
 				//Add new location to move list
-				list.push_back(Move(Tile(row, column), Tile(new_row, new_column)));
+				list.push_back(Move(Tile(row, column), Tile(new_row, new_column), 4));
 			}
 
 			// Is location occupied by opponent?
 			else if (n->getColor() != color)
 			{
 				//Add new location to move list
-				list.push_back(Move(Tile(row, column), Tile(new_row, new_column)));
+				list.push_back(Move(Tile(row, column), Tile(new_row, new_column), 4));
 			}
 		}
 	}
