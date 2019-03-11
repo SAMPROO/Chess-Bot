@@ -6,7 +6,7 @@
 #include "Queen.h"
 #include "Pawn.h"
 
-const double 	kingValue	=	100, 
+const double 	kingValue	=	4, 
 				queenValue	=	9, 
 				rookValue	=	5, 
 				bishopValue =	3.25, 
@@ -424,7 +424,7 @@ bool Position::isTileThreatened(Tile tile, int enemyColor)
 	return false;
 }
 
-MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn)
+MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, Move currentMove)
 {
 	MinMaxReturn returnValue;
 
@@ -442,7 +442,7 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn)
 	// Rekursion kantatapaus 2: katkaisusyvyydessä
 	if (depth == 0)
 	{
-		returnValue._evaluationValue = evaluate();
+		returnValue._evaluationValue = evaluate(currentMove, turn);
 		return returnValue;
 	}
 
@@ -457,7 +457,7 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn)
 		newPosition.updatePosition(&move, false);
 
 		// Rekursiivinen kutsu.
-		MinMaxReturn value = newPosition.minimax(depth - 1, alpha, beta, !turn);
+		MinMaxReturn value = newPosition.minimax(depth - 1, alpha, beta, !turn, move);
 
 		// Tutkitaan ollaan löydetty uusi paras siirto.
 		if ((turn && value._evaluationValue < returnValue._evaluationValue) || 
@@ -531,7 +531,7 @@ double Position::endResult(int turn)
 
 	jne. jne.
 */
-double Position::evaluate()
+double Position::evaluate(Move currentMove, int turn)
 {
 	// Vakiokertoimet kuvaavat eri tekijöiden tärkeyttä suhteessa toisiinsa.
 	// Kertoimien asettaminen edellyttää testaamista ja sovellusalueen (shakki)
@@ -539,12 +539,14 @@ double Position::evaluate()
 	// kertoimet ovat yleensä tätä pienempiä, koska materiaali on kaikkein
 	// tärkein yksittäinen tekijä.
 	const double materialMultiplier = 1.0;
+	const double pieceTileMultiplier = 0.01;
 
 	// Materiaali
 	double material = calculateMaterialValue();
+	double pieceTileValue = calculatePieceTileValue(currentMove, turn);
 
 	// Palautetaan eri tekijöiden painotettu summa.
-	return materialMultiplier * material; // + linjaKerroin * linjat + ... jne
+	return materialMultiplier * material - pieceTileMultiplier * pieceTileValue; // + linjaKerroin * linjat + ... jne
 }
 
 
@@ -569,3 +571,212 @@ double Position::calculateMaterialValue()
 
 	return whiteValue - blackValue;
 }
+
+const int pawnMiddleGameTable[/*64*/] = {
+		0, 0, 0, 0, 0, 0, 0, 0,
+		-21, -16, -6, -1, -1, -6, -16, -21,
+		-21, -16, -6, 4, 4, -6, -16, -21,
+		-21, -16, -1, 9, 9, -1, -16, -21,
+		-14, -8, 6, 17, 17, 6, -8, -14,
+		-5, 1, 14, 29, 29, 14, 1, -5,
+		7, 11, 23, 39, 39, 23, 11, 7,
+		0, 0, 0, 0, 0, 0, 0, 0 };
+
+const int pawnEndGameTable[] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	5, -10, -20, -25, -25, -20, -10, 5,
+	5, -10, -20, -25, -25, -20, -10, 5,
+	10, -5, -15, -20, -20, -15, -5, 10,
+	18, 2, -8, -15, -15, -8, 2, 18,
+	30, 14, 1, -10, -10, 1, 14, 30,
+	45, 30, 16, 5, 5, 16, 30, 45,
+	0, 0, 0, 0, 0, 0, 0, 0 };
+
+const int horseMiddleGameTable[] = {
+	-69, -19, -24, -14, -14, -24, -19, -69,
+	-54, -39, -9, 11, 11, -9, -39, -54,
+	-39, 1, 31, 21, 21, 31, 1, -39,
+	-39, 11, 41, 36, 36, 41, 11, -39,
+	-39, 41, 51, 51, 51, 51, 41, -39,
+	-39, 46, 61, 71, 71, 61, 46, -39,
+	-39, 21, 41, 41, 41, 41, 21, -39,
+	-59, -39, -29, -29, -29, -29, -39, -59 };
+
+
+const int horseEndGameTable[] = {
+	-63, -53, -43, -43, -43, -43, -53, -63,
+	-53, -43, 18, 28, 28, 18, -43, -53,
+	-43, 18, 48, 38, 38, 48, 18, -43,
+	-43, 38, 58, 68, 68, 58, 38, -43,
+	-43, 38, 73, 78, 78, 73, 38, -43,
+	-43, 28, 78, 73, 73, 78, 28, -43,
+	-53, -43, 38, 48, 48, 38, -43, -53,
+	-63, -53, -43, -43, -43, -43, -53, -63 };
+
+
+const int bishopMiddleGameTable[] = {
+	-30, -25, -20, -20, -20, -20, -25, -30,
+	-28, 11, 6, 1, 1, 6, 11, -28,
+	-25, 6, 16, 11, 11, 16, 6, -25,
+	1, 1, 16, 21, 21, 16, 1, 1,
+	1, 21, 21, 26, 26, 21, 21, 1,
+	1, 11, 21, 26, 26, 21, 11, 1,
+	-10, 11, 1, 1, 1, 1, 11, -10,
+	-20, -18, -16, -14, -14, -16, -18, -20 };
+
+
+const int bishopEndGameTable[] = {
+	-38, -18, -8, 2, 2, -8, -18, -38,
+	-18, -8, 2, 7, 7, 2, -8, -18,
+	-8, 2, 10, 12, 12, 10, 2, -8,
+	2, 12, 16, 20, 20, 16, 12, 2,
+	2, 12, 17, 22, 22, 17, 12, 2,
+	-8, 2, 20, 22, 22, 20, 2, -8,
+	-18, -8, 0, 12, 12, 0, -8, -18,
+	-38, -18, -8, 2, 2, -8, -18, -38 };
+
+
+const int rookMiddleGameTable[] = {
+	-8, -6, 2, 7, 7, 2, -6, -8,
+	-8, -6, 2, 7, 7, 2, -6, -8,
+	-8, -6, 6, 7, 7, 6, -6, -8,
+	-8, -6, 6, 7, 7, 6, -6, -8,
+	-8, -6, 6, 8, 8, 6, -6, -8,
+	-8, -6, 6, 10, 10, 6, -6, -8,
+	2, 2, 7, 12, 12, 7, 2, 2,
+	-8, -6, 2, 7, 7, 2, -6, -8 };
+
+
+const int rookEndGameTable[] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0 };
+
+
+const int queenMiddleGameTable[] = {
+	-26, -16, -6, 4, 4, -6, -16, -26,
+	-16, -11, -1, 4, 4, -1, -11, -16,
+	-6, -6, -1, 4, 4, -1, -6, -6,
+	4, 4, 4, 4, 4, 4, 4, 4,
+	4, 4, 4, 4, 4, 4, 4, 4,
+	4, 4, 4, 4, 4, 4, 4, 4,
+	4, 4, 4, 4, 4, 4, 4, 4,
+	4, 4, 4, 4, 4, 4, 4, 4 };
+
+
+const int queenEndGameTable[] = {
+	-46, -41, -31, -26, -26, -31, -41, -46,
+	-31, -26, -16, -6, -6, -16, -26, -31,
+	-16, -1, 14, 24, 24, 14, -1, -16,
+	-6, 9, 24, 34, 34, 24, 9, -6,
+	-6, 9, 24, 34, 34, 24, 9, -6,
+	-6, 9, 24, 34, 34, 24, 9, -6,
+	-16, 4, 19, 29, 29, 19, 4, -16,
+	-26, -6, -1, 4, 4, -1, -6, -26 };
+
+
+const int kingMiddleGameTable[] = {
+	-20, 0, 0, -10, -10, 0, 0, -20,
+	-30, -30, -30, -35, -35, -30, -30, -30,
+	-40, -40, -45, -50, -50, -45, -40, -40,
+	-50, -50, -55, -60, -60, -55, -50, -50,
+	-55, -55, -60, -70, -70, -60, -55, -55,
+	-55, -55, -60, -70, -70, -60, -55, -55,
+	-55, -55, -60, -70, -70, -60, -55, -55,
+	-55, -55, -60, -70, -70, -60, -55, -55 };
+
+const int kingEndGameTable[] = {
+	-30, -25, -15, -10, -10, -15, -25, -30,
+	-15, -10, 0, 10, 10, 0, -10, -15,
+	0, 15, 30, 40, 40, 30, 15, 0,
+	10, 25, 40, 50, 50, 40, 25, 10,
+	10, 25, 40, 50, 50, 40, 25, 10,
+	10, 25, 40, 50, 50, 40, 25, 10,
+	0, 20, 35, 45, 45, 35, 20, 0,
+	-10, 10, 15, 20, 20, 15, 10, -10 };
+
+double Position::calculatePieceTileValue(Move currentMove, int turn)
+{
+	int row = getTurn() ? 7 : 0;
+
+	// Short Rook
+	if (currentMove.isShortRook())
+		return 50;
+	// Long Rook
+	else if (currentMove.isLongRook())
+		return 60;
+
+	int originColumn = currentMove.getOrigin().getColumn();
+	int originRow = currentMove.getOrigin().getRow();
+
+	int destinationColumn = currentMove.getDestination().getColumn();
+	int destinationRow = currentMove.getDestination().getRow();
+
+	ChessPiece *chessPiece = board[destinationColumn][destinationRow];
+
+	int color = chessPiece->getColor();
+
+	if (color)
+	{
+		/*destinationIndex = 63 - destinationIndex;
+		originIndex = 63 - originIndex;*/
+
+		originColumn = 7 - originColumn;
+		originRow = 7 - originRow;
+
+		destinationColumn = 7 - destinationColumn;
+		destinationRow = 7 - destinationRow;
+	}
+
+	int destinationIndex = destinationRow * 9 + destinationColumn;
+	int originIndex = originRow * 9 + originColumn;
+
+	int pieceTileValue = 0;
+
+	switch (chessPiece->getCode())
+	{
+	case BR:
+	case WR:
+		if (rookMiddleGameTable[originIndex] < rookMiddleGameTable[destinationIndex])
+			pieceTileValue = rookMiddleGameTable[destinationIndex];
+		break;
+
+	case BH:
+	case WH:
+		if (horseMiddleGameTable[originIndex] < horseMiddleGameTable[destinationIndex])
+			pieceTileValue = horseMiddleGameTable[destinationIndex];
+		break;
+
+	case BB:
+	case WB:
+		if (bishopMiddleGameTable[originIndex] < bishopMiddleGameTable[destinationIndex])
+			pieceTileValue = bishopMiddleGameTable[destinationIndex];
+		break;
+
+	case BQ:
+	case WQ:
+		if (queenMiddleGameTable[originIndex] < queenMiddleGameTable[destinationIndex])
+			pieceTileValue = queenMiddleGameTable[destinationIndex];
+		break;
+
+	case BK:
+	case WK:
+		if (kingMiddleGameTable[originIndex] < kingMiddleGameTable[destinationIndex])
+			pieceTileValue = kingMiddleGameTable[destinationIndex];
+		break;
+
+	case BP:
+	case WP:
+		if (pawnMiddleGameTable[originIndex] < pawnMiddleGameTable[destinationIndex])
+			pieceTileValue = pawnMiddleGameTable[destinationIndex];
+		break;
+	}
+
+	return (color ? -1 : 1) * pieceTileValue;
+}
+

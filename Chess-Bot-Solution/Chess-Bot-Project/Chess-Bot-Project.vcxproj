@@ -176,6 +176,7 @@
     <ClInclude Include="Move.h" />
     <ClInclude Include="MoveStack.h" />
     <ClInclude Include="Pawn.h" />
+    <ClInclude Include="PieceSquareValues.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="Queen.h" />
     <ClInclude Include="Rook.h" />

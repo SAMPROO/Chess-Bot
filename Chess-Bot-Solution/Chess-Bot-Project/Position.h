@@ -2,6 +2,7 @@
 #include "ChessPiece.h"
 #include "MoveStack.h"
 #include "MinMaxReturn.h"
+#include "PieceSquareValues.h"
 
 using namespace std;
 
@@ -45,9 +46,12 @@ public:
 	MoveStack * _moveStack;
 
 	double endResult(int turn);
-	double evaluate();
-	MinMaxReturn minimax(int depth, double alpha, double beta, int turn);
+	double evaluate(Move currentMove, int turn);
+	MinMaxReturn minimax(int depth, double alpha, double beta, int turn, Move currentMove);
 	double calculateMaterialValue();
+	double calculatePieceTileValue(Move currentMove, int turn);
+
+	static const PieceTileValue _pieceTileValues;
 	
 	double inf = numeric_limits<double>::infinity();
 };
