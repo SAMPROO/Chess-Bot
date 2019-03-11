@@ -51,8 +51,8 @@ public:
 	double endResult(int turn);
 	double evaluate(Move currentMove, int turn);
 	MinMaxReturn minimax(int depth, double alpha, double beta, int turn, Move currentMove);
-	double calculateMaterialValue();
-	double calculatePieceTileValue(/*Move currentMove, int turn*/);
+	pair<double, double> calculateMaterialValue();
+	double calculatePieceTileValue(/*Move currentMove, int turn*/bool materialValue);
 
 	static const PieceTileValue _pieceTileValues;
 	

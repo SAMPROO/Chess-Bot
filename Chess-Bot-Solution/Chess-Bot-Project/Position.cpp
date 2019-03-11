@@ -8,12 +8,13 @@
 
 #include <chrono>
 
-const double 	kingValue	=	4, 
-				queenValue	=	9, 
-				rookValue	=	5, 
-				bishopValue =	3.25, 
-				horseValue	=	3, 
-				pawnValue	=	1;
+const double 	kingValue = 4,
+		queenValue	=	9,
+		rookValue	=	5,
+		bishopValue	=	3.25,
+		horseValue	=	3,
+		pawnValue	=	1,
+		pieceCombinedValue	=	kingValue + queenValue + (rookValue + bishopValue + horseValue) * 2 + pawnValue * 8;
 
 ChessPiece* Position::wRook = new Rook(L"\u2656", 0, WR, rookValue);
 ChessPiece* Position::wHorse = new Horse(L"\u2658", 0, WH, horseValue);
@@ -616,15 +617,21 @@ double Position::evaluate(Move currentMove, int turn)
 	const double pieceTileMultiplier = 0.01;
 
 	// Materiaali
-	double material = calculateMaterialValue();
-	double pieceTileValue = calculatePieceTileValue(/*currentMove, turn*/);
+	auto temp = calculateMaterialValue();
+	double whiteMaterial = temp.first;
+	double blackMaterial = temp.second;
+
+	bool inEndGamePhase = (turn ? blackMaterial : whiteMaterial) <= (pieceCombinedValue / 2);
+
+	double material = whiteMaterial - blackMaterial;
+	double pieceTileValue = calculatePieceTileValue(/*currentMove, turn*/inEndGamePhase);
 
 	// Palautetaan eri tekijöiden painotettu summa.
 	return materialMultiplier * material - pieceTileMultiplier * pieceTileValue; // + linjaKerroin * linjat + ... jne
 }
 
 
-double Position::calculateMaterialValue()
+pair<double, double> Position::calculateMaterialValue()
 {
 	double whiteValue = 0;
 	double blackValue = 0;
@@ -643,7 +650,7 @@ double Position::calculateMaterialValue()
 		}
 	}
 
-	return whiteValue - blackValue;
+	return make_pair(whiteValue, blackValue);
 }
 
 const int pawnMiddleGameTable[/*64*/] = {
@@ -774,7 +781,7 @@ const int kingEndGameTable[] = {
 	0, 20, 35, 45, 45, 35, 20, 0,
 	-10, 10, 15, 20, 20, 15, 10, -10 };
 
-double getGameTableValue(int index, int code) 
+double getGameTableValue(int index, int code, bool inEndGamePhase)
 {
 	int pieceTileValue = 0;
 
@@ -782,31 +789,31 @@ double getGameTableValue(int index, int code)
 	{
 	case BR:
 	case WR:
-		return rookMiddleGameTable[index];
+		return inEndGamePhase ? rookEndGameTable[index] : rookMiddleGameTable[index];
 
 	case BH:
 	case WH:
-		return horseMiddleGameTable[index];
+		return inEndGamePhase ? horseEndGameTable[index] : horseMiddleGameTable[index];
 
 	case BB:
 	case WB:
-		return bishopMiddleGameTable[index];
+		return inEndGamePhase ? bishopEndGameTable[index] : bishopMiddleGameTable[index];
 
 	case BQ:
 	case WQ:
-		return queenMiddleGameTable[index];
+		return inEndGamePhase ? queenEndGameTable[index] : queenMiddleGameTable[index];
 
 	case BK:
 	case WK:
-		return kingMiddleGameTable[index];
+		return inEndGamePhase ? kingEndGameTable[index] : kingMiddleGameTable[index];
 
 	case BP:
 	case WP:
-		return pawnMiddleGameTable[index];
+		return inEndGamePhase ? pawnEndGameTable[index] : pawnMiddleGameTable[index];
 	}
 }
 
-double Position::calculatePieceTileValue()
+double Position::calculatePieceTileValue(bool inEndGamePhase)
 {
 	double whiteValue = 0;
 	double blackValue = 0;
@@ -820,9 +827,9 @@ double Position::calculatePieceTileValue()
 				int index = y * 9 + x;
 
 				if (board[x][y]->getColor())					
-					blackValue += getGameTableValue(index, board[x][y]->getCode());
+					blackValue += getGameTableValue(index, board[x][y]->getCode(), inEndGamePhase);
 				else
-					whiteValue += getGameTableValue(index, board[x][y]->getCode());
+					whiteValue += getGameTableValue(index, board[x][y]->getCode(), inEndGamePhase);
 			}
 		}
 	}
