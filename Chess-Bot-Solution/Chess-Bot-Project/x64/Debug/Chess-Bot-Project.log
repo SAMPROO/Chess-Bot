@@ -1,2 +1,6 @@
-﻿  Position.cpp
-  Chess-Bot-Project.vcxproj -> C:\GitHub\Chess-Bot\Chess-Bot-Solution\x64\Debug\Chess-Bot-Project.exe
+﻿  Chess-Bot-Project.cpp
+  Position.cpp
+  UI.cpp
+  Generating Code...
+c:\users\topia\documents\chessbot\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(807): warning C4715: 'fuu': not all control paths return a value
+  Chess-Bot-Project.vcxproj -> C:\Users\topia\Documents\ChessBot\Chess-Bot\Chess-Bot-Solution\x64\Debug\Chess-Bot-Project.exe

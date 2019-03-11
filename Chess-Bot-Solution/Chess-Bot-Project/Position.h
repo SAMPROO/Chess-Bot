@@ -18,8 +18,8 @@ public:
 	static ChessPiece *wKing, *wQueen, *wRook, *wBishop, *wHorse, *wPawn;	// Valkeat nappulat.
 	static ChessPiece *bKing, *bQueen, *bRook, *bBishop, *bHorse, *bPawn;	// Mustat nappulat.
 
-	Tile* _whiteKing;
-	Tile* _blackKing;
+	/*Tile* _whiteKing;
+	Tile* _blackKing;*/
 
 	void updatePosition(Move* move, bool realMove = true);
 	void undoMove();
@@ -52,7 +52,7 @@ public:
 	double evaluate(Move currentMove, int turn);
 	MinMaxReturn minimax(int depth, double alpha, double beta, int turn, Move currentMove);
 	double calculateMaterialValue();
-	double calculatePieceTileValue(Move currentMove, int turn);
+	double calculatePieceTileValue(/*Move currentMove, int turn*/);
 
 	static const PieceTileValue _pieceTileValues;
 	
