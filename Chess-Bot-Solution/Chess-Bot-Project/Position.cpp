@@ -400,6 +400,7 @@ void Position::isCheck(std::list<Move>& moves, int turn)
 	}
 
 	moves = safeMoves;
+
 }
 
 void Position::addCastling(std::list<Move>& moves, int turn)
