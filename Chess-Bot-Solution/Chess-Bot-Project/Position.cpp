@@ -581,7 +581,6 @@ double Position::endResult(int turn)
 		return turn ? 1000000 : -1000000;	// matti
 }
 
-
 /*
 	Aseman numeerinen arviointi eri tekijöiden perusteella, esim.
 
