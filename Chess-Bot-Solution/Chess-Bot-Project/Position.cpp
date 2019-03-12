@@ -257,6 +257,8 @@ void Position::undoMove()
 		
 	_turn = previousPosition->_turn;
 
+	_previousMove = previousPosition->_previousMove;
+
 	_positionStack->pop();
 
 	//delete previousPosition;
