@@ -52,7 +52,7 @@ bool Move::isEnPassant()
 	return _enPassant;
 }
 
-bool Move::isPromoted()
+int Move::isPromoted()
 {
 	return _promoted;
 }

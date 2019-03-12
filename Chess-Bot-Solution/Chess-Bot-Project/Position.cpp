@@ -342,9 +342,9 @@ void Position::setLongRookMoved()
 
 //enum startOrder { R, H, B, Q, K, P, Sr, Lr };
 
-				  // R, H, B, Q, K, P, 0-0, 0-0-0
-int sortList1[8] = { 7, 1, 2, -1, 6, 0, 5, 4 };
-int sortList2[8] = { 7, 1, 2, -1, 6, 0, 5, 4 };
+							   // R, H, B, Q, K, P, 0-0, 0-0-0
+int middleGamePieceOrder[8]	=	{ 7, 1, 2, 3, 6, 0, 5, 4 };
+int endGamePieceOrder[8]	=	{ 2, 3, 5, 0, 6, 4, 5, 7 };
 
 bool inEndGamePhase;
 
@@ -353,9 +353,9 @@ bool my_compare(Move &a, Move &b)
 	switch (inEndGamePhase)
 	{
 	case 0:
-		return sortList1[a._piece] < sortList1[b._piece];
+		return middleGamePieceOrder[a._piece] < middleGamePieceOrder[b._piece];
 	case 1:
-		return sortList2[a._piece] < sortList1[b._piece];
+		return endGamePieceOrder[a._piece] < middleGamePieceOrder[b._piece];
 	}	
 }
 
@@ -544,6 +544,11 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		return returnValue;
 	}
 
+	if (timer <= 0 && &returnValue != NULL)
+	{
+		return returnValue;
+	}
+
 	// alustetaan paluuarvo huonoimmaksi mahdolliseksi.
 	returnValue._evaluationValue = (turn ? inf : -inf);
 
@@ -554,8 +559,17 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		Position newPosition = *this;
 		newPosition.updatePosition(&move, false);
 
+		//Time to complete MinMaxReturn
+		auto begin = chrono::high_resolution_clock::now();
+
 		// Rekursiivinen kutsu.
 		MinMaxReturn value = newPosition.minimax(depth - 1, alpha, beta, !turn, move);
+
+		auto end = chrono::high_resolution_clock::now();
+		auto dur = end - begin;
+		auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+
+		timer -= ms * 0.001f;
 
 		// Tutkitaan ollaan löydetty uusi paras siirto.
 		if ((turn && value._evaluationValue < returnValue._evaluationValue) || 
@@ -602,12 +616,10 @@ double Position::endResult(int turn)
 
 	if (isTileThreatened(Tile(kx, ky)/*king*/, !turn)) {
 
-		wcout << "!!!DRAW!!!" << endl;
 		return 0; // tasapeli (patti)
 	}
 	else
 	{
-		wcout << "!!!CHECKMATE " << (turn ? "WHITE" : "BLACK") << " WON!!!" << endl;
 		return turn ? 1000000 : -1000000;	// matti
 	}
 }
@@ -812,7 +824,6 @@ const int kingEndGameTable[] = {
 
 double getGameTableValue(int index, int code, bool inEndGamePhase)
 {
-	int pieceTileValue = 0;
 
 	switch (code)
 	{

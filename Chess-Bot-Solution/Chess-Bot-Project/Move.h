@@ -13,7 +13,7 @@ public:
 	bool isShortRook();
 	bool isLongRook();
 	bool isEnPassant();
-	bool isPromoted();
+	int isPromoted();
 
 	int _piece;
 

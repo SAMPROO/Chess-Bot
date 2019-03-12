@@ -1,5 +1,13 @@
-﻿Position.obj : error LNK2019: unresolved external symbol "public: __cdecl Move::Move(class Tile,class Tile,int,bool,bool)" (??0Move@@QEAA@VTile@@0H_N1@Z) referenced in function "public: void __cdecl Position::addEnPassant(class std::list<class Move,class std::allocator<class Move> > &,int)" (?addEnPassant@Position@@QEAAXAEAV?$list@VMove@@V?$allocator@VMove@@@std@@@std@@H@Z)
-UI.obj : error LNK2001: unresolved external symbol "public: __cdecl Move::Move(class Tile,class Tile,int,bool,bool)" (??0Move@@QEAA@VTile@@0H_N1@Z)
-Position.obj : error LNK2019: unresolved external symbol "public: __cdecl Move::Move(bool,bool,int)" (??0Move@@QEAA@_N0H@Z) referenced in function "public: void __cdecl Position::addCastling(class std::list<class Move,class std::allocator<class Move> > &,int)" (?addCastling@Position@@QEAAXAEAV?$list@VMove@@V?$allocator@VMove@@@std@@@std@@H@Z)
-UI.obj : error LNK2001: unresolved external symbol "public: __cdecl Move::Move(bool,bool,int)" (??0Move@@QEAA@_N0H@Z)
-C:\GitHub\Chess-Bot\Chess-Bot-Solution\x64\Debug\Chess-Bot-Project.exe : fatal error LNK1120: 2 unresolved externals
+﻿  Chess-Bot-Project.cpp
+  ChessPiece.cpp
+  MinMaxReturn.h
+  Move.cpp
+  MoveStack.cpp
+  Position.cpp
+  UI.cpp
+  Generating Code...
+c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(360): warning C4715: 'my_compare': not all control paths return a value
+c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(857): warning C4715: 'getGameTableValue': not all control paths return a value
+Chess-Bot-Project.obj : error LNK2001: unresolved external symbol "public: static double Position::timer" (?timer@Position@@2NA)
+Position.obj : error LNK2001: unresolved external symbol "public: static double Position::timer" (?timer@Position@@2NA)
+C:\GitHub\Chess-Bot\Chess-Bot-Solution\x64\Debug\Chess-Bot-Project.exe : fatal error LNK1120: 1 unresolved externals
