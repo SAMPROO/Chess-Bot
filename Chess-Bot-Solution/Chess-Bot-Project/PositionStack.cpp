@@ -9,11 +9,10 @@ PositionStack::~PositionStack() {
 		pop();
 }
 
-void PositionStack::push(Position *position, Move previousMove)
+void PositionStack::push(Position *position)
 {
 	PositionStack *temp = new PositionStack();
 
-	temp->_previousMove = previousMove;
 	temp->_position = position;
 	temp->_next = _top;
 		
@@ -38,11 +37,6 @@ PositionStack * PositionStack::peak()
 bool PositionStack::isEmpty()
 {
 	return (_top == NULL);
-}
-
-Move PositionStack::getMove()
-{
-	return _top->_previousMove;
 }
 
 Position * PositionStack::getPosition()

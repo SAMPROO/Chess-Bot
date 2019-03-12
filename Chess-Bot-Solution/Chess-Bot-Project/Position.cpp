@@ -30,10 +30,10 @@ ChessPiece* Position::bKing = new King(L"\u265A", 1, BK, kingValue);
 ChessPiece* Position::bQueen = new Queen(L"\u265B", 1, BQ, queenValue);
 ChessPiece* Position::bPawn = new Pawn(L"\u265F", 1, BP, pawnValue);
 
-Position::Position(PositionStack *positionStack, long maxTime) {
+Position::Position() {
 
-	_positionStack = positionStack;
-	_maxTime = maxTime;
+	_positionStack = new PositionStack();
+	//_maxTime = maxTime;
 
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
@@ -70,6 +70,11 @@ void Position::updatePosition(Move* move, bool realMove, bool aiMove)
 {
 	/*if (realMove)
 		_moveStack->push(*move);*/
+
+	_previousMove = *move;
+
+	if (realMove)
+		_positionStack->push(new Position(*this));
 
 	//int turn = getTurn();
 	int row = _turn ? 7 : 0;
@@ -229,8 +234,6 @@ void Position::updatePosition(Move* move, bool realMove, bool aiMove)
 	/*if (realMove)
 		*/
 	changeTurn();
-
-	_positionStack->push(this, *move);
 }
 
 void Position::undoMove()
@@ -238,13 +241,16 @@ void Position::undoMove()
 	if (_positionStack->isEmpty())
 		return;
 
-	Position *previousPosition = _positionStack->getPosition();
+	Position * previousPosition = _positionStack->getPosition();
+	if (previousPosition == NULL)
+		return;
 
-	_positionStack->pop();
+	//_positionStack->pop();
 
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
 			board[i][j] = previousPosition->board[i][j];
+			
 
 	for (int i = 0; i < 6; i++)
 		_castlingBools[i] = previousPosition->_castlingBools[i];
@@ -253,7 +259,7 @@ void Position::undoMove()
 
 	_positionStack->pop();
 
-	delete previousPosition;
+	//delete previousPosition;
 
 	//Move move = _positionStack->getMove();
 
@@ -498,7 +504,7 @@ void Position::addEnPassant(std::list<Move>& moves, int turn)
 	if (_positionStack->isEmpty())
 		return;
 
-	Move lastMove = _positionStack->getMove();
+	Move lastMove = _positionStack->getPosition()->_previousMove;
 	if (lastMove.getOrigin().getRow() != (!turn ? 6 : 1))
 		return;
 
@@ -552,7 +558,7 @@ bool Position::isTileThreatened(Tile tile, int enemyColor)
 	return false;
 }
 
-MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, Move currentMove, long startTime)
+MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, Move currentMove/*, long startTime*/)
 {
 	MinMaxReturn returnValue;
 
@@ -594,7 +600,7 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		newPosition.updatePosition(&move, false);
 
 		// Rekursiivinen kutsu.
-		MinMaxReturn value = newPosition.minimax(depth - 1, alpha, beta, !turn, move, startTime);		
+		MinMaxReturn value = newPosition.minimax(depth - 1, alpha, beta, !turn, move/*, startTime*/);		
 
 		// Tutkitaan ollaan löydetty uusi paras siirto.
 		if ((turn && value._evaluationValue < returnValue._evaluationValue) || 

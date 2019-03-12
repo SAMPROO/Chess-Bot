@@ -12,7 +12,14 @@ class Position {
 
 public:
 	//Constructor sets the starting position on the board
-	Position(PositionStack * positionStack, long maxTime);
+	Position();
+
+	Position(const Position& pos)
+	{
+		if (this != &pos)
+			*this = pos;
+	}
+
 	ChessPiece * board[8][8];
 
 	static ChessPiece *wKing, *wQueen, *wRook, *wBishop, *wHorse, *wPawn;	// Valkeat nappulat.
@@ -50,16 +57,19 @@ public:
 
 	double endResult(int turn);
 	double evaluate(int turn, Move move);
-	MinMaxReturn minimax(int depth, double alpha, double beta, int turn, Move currentMove, long startTime);
+	MinMaxReturn minimax(int depth, double alpha, double beta, int turn, Move currentMove/*, long startTime*/);
 	pair<double, double> calculateMaterialValue();
 	double calculatePieceTileValue(/*Move currentMove, int turn*/bool materialValue);
 	double calculateCastlingValue(Move move);
 
 	double inf = numeric_limits<double>::infinity();
 
-	long _maxTime;
+	long _maxTime = 0;
 
 	bool _castlingBools[6] = { 0,0,0,0,0,0 };
 	int _turn = 0;
 
+
+ 	//Position * _previousPosition;
+	Move _previousMove;
 };

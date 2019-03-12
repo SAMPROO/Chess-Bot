@@ -1,7 +1,10 @@
 #pragma once
 
 #include <iostream>
-#include "ChessPiece.h"
+//#include "ChessPiece.h"
+
+class Position; 
+class Move;
 
 class PositionStack {
 public:
@@ -9,18 +12,17 @@ public:
 	PositionStack();
 	~PositionStack();
 
-	void push(Position * position, Move previuosMove);
+	void push(Position * position);
 
 	void pop();
 	PositionStack * peak();
 
 	bool isEmpty();
 
-	Move getMove();
 	Position *getPosition();
+
 private:
 	PositionStack* _top = NULL;
 	PositionStack* _next = NULL;
 	Position * _position = NULL;
-	Move _previousMove;
 };
