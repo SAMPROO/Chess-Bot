@@ -86,24 +86,25 @@ Move UI::getOpponentMove(string inputOpponentMove, bool colorSelection)
 		if (inputOpponentMove.length() == 6)
 		{
 			// T/R/L/D
-			switch (inputOpponentMove[6])
+			char a = inputOpponentMove[5];
+			switch (a)
 			{
-			case 'T':
+			case 'r':
 				promotedTo = 0;
 				break;
-			case 'R':
+			case 'h':
 				promotedTo = 1;
 				break;
-			case 'L':
+			case 'b':
 				promotedTo = 2;
 				break;
-			case 'D':
+			case 'q':
 				promotedTo = 3;
 				break;
 			}
 		}
 
-		opponentMove = Move(tiles[0], tiles[1], 0, 0, promotedTo);
+		opponentMove = Move(tiles[0], tiles[1], 5, 0, promotedTo);
 	}
 
 	return opponentMove;

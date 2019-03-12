@@ -52,9 +52,12 @@ Position::Position() {
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
 	{
-		board[i][1] = wPawn;
-		board[i][6] = bPawn;
+		//board[i][1] = wPawn;
+		//board[i][6] = bPawn;
 	}
+
+	board[0][1] = bPawn;
+	board[0][6] = wPawn;
 
 	//board[0][7] = bRook;
 	//board[1][7] = bHorse;
@@ -228,8 +231,6 @@ void Position::updatePosition(Move* move, bool realMove, bool aiMove)
 		board[destinationColumn][destinationRow] = chessPiece;
 		board[originColumn][originRow] = NULL;
 	}
-
-	
 
 	/*if (realMove)
 		*/
@@ -531,7 +532,7 @@ void Position::addEnPassant(std::list<Move>& moves, int turn)
 			Tile origin = Tile(!turn ? 4 : 3, column);
 			Tile destination = Tile(lastDestination.getRow() + (turn ? -1 : 1), lastDestination.getColumn());
 
-			moves.push_back(Move(origin, destination, true));
+			moves.push_back(Move(origin, destination, 0, true));
 		}
 	}	
 }

@@ -28,6 +28,9 @@ bool Move::operator==(const Move & rhs) const
 	if (_destination != rhs._destination)
 		return false;
 
+	if (_promoted != rhs._promoted)
+		return false;
+
 	return true;
 }
 

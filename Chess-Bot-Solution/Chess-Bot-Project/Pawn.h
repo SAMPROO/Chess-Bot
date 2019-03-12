@@ -31,7 +31,6 @@ public:
 				list.push_back(Move(*tile, Tile(new_row, column), 5, false, 3)); // 1 = Horse
 				list.push_back(Move(*tile, Tile(new_row, column), 5, false, 2)); // 2 = Bishop
 				list.push_back(Move(*tile, Tile(new_row, column), 5, false, 1)); // 3 = Queen
-
 			}
 			else
 			{
