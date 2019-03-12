@@ -57,6 +57,6 @@ public:
 	static const PieceTileValue _pieceTileValues;
 	
 	double inf = numeric_limits<double>::infinity();
-	static double timer;
+	//static double timer;
 
 };

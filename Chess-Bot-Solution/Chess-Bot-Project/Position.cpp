@@ -544,10 +544,10 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		return returnValue;
 	}
 
-	if (timer <= 0 && &returnValue != NULL)
+	/*if (timer <= 0 && &returnValue != NULL)
 	{
 		return returnValue;
-	}
+	}*/
 
 	// alustetaan paluuarvo huonoimmaksi mahdolliseksi.
 	returnValue._evaluationValue = (turn ? inf : -inf);
@@ -560,16 +560,16 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		newPosition.updatePosition(&move, false);
 
 		//Time to complete MinMaxReturn
-		auto begin = chrono::high_resolution_clock::now();
+		/*auto begin = chrono::high_resolution_clock::now();*/
 
 		// Rekursiivinen kutsu.
 		MinMaxReturn value = newPosition.minimax(depth - 1, alpha, beta, !turn, move);
 
-		auto end = chrono::high_resolution_clock::now();
+		/*auto end = chrono::high_resolution_clock::now();
 		auto dur = end - begin;
 		auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
 
-		timer -= ms * 0.001f;
+		timer -= ms * 0.001f;*/
 
 		// Tutkitaan ollaan löydetty uusi paras siirto.
 		if ((turn && value._evaluationValue < returnValue._evaluationValue) || 
