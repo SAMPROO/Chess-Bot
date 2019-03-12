@@ -41,29 +41,29 @@ Position::Position(PositionStack *positionStack, long maxTime) {
 
 	// Initialization of white pieces 
 	board[0][0] = wRook;
-	board[1][0] = wHorse;
+	/*board[1][0] = wHorse;
 	board[2][0] = wBishop;
-	board[3][0] = wQueen;
+	board[3][0] = wQueen;*/
 	board[4][0] = wKing;
-	board[5][0] = wBishop;
-	board[6][0] = wHorse;
+	/*board[5][0] = wBishop;
+	board[6][0] = wHorse;*/
 	board[7][0] = wRook;
 
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
-	{
+	{/*
 		board[i][1] = wPawn;
-		board[i][6] = bPawn;
+		board[i][6] = bPawn;*/
 	}
 
-	board[0][7] = bRook;
-	board[1][7] = bHorse;
-	board[2][7] = bBishop;
-	board[3][7] = bQueen;
-	board[4][7] = bKing;
+	//board[0][7] = bRook;
+	//board[1][7] = bHorse;
+	//board[2][7] = bBishop;
+	//board[3][7] = bQueen;
+	board[4][7] = bKing;/*
 	board[5][7] = bBishop;
 	board[6][7] = bHorse;
-	board[7][7] = bRook;
+	board[7][7] = bRook;*/
 }
 
 void Position::updatePosition(Move* move, bool realMove, bool aiMove)
@@ -138,9 +138,9 @@ void Position::updatePosition(Move* move, bool realMove, bool aiMove)
 			case BR:
 			case WR:
 				if (originColumn)
-					setLongRookMoved();
-				else
 					setShortRookMoved();
+				else
+					setLongRookMoved();
 				break;
 
 			case BK:
@@ -385,6 +385,8 @@ bool my_compare(Move &a, Move &b)
 		return middleGamePieceOrder[a._piece] < middleGamePieceOrder[b._piece];
 	case 1:
 		return endGamePieceOrder[a._piece] < middleGamePieceOrder[b._piece];
+	default:
+		return 0;
 	}	
 }
 
@@ -875,7 +877,10 @@ double getGameTableValue(int index, int code, bool inEndGamePhase)
 	case BP:
 	case WP:
 		return inEndGamePhase ? pawnEndGameTable[index] : pawnMiddleGameTable[index];
+	default:
+		return 0;
 	}
+
 }
 
 double Position::calculatePieceTileValue(bool inEndGamePhase)
@@ -910,6 +915,8 @@ double Position::calculateCastlingValue(Move currentMove)
 	// Long Rook
 	else if (currentMove.isLongRook())
 		return 60;
+	else
+		return 0;
 }
 
 //double Position::calculatePieceTileValue(Move currentMove, int turn)
