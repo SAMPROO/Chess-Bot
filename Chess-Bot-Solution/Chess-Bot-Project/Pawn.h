@@ -60,16 +60,16 @@ public:
 
 				if (new_row == 7 || new_row == 0)
 				{
-					list.push_back(Move(*tile, Tile(new_row, column), 5, false, 0)); // 0 = Rook
-					list.push_back(Move(*tile, Tile(new_row, column), 5, false, 3)); // 1 = Horse
-					list.push_back(Move(*tile, Tile(new_row, column), 5, false, 2)); // 2 = Bishop
-					list.push_back(Move(*tile, Tile(new_row, column), 5, false, 1)); // 3 = Queen
+					list.push_back(Move(*tile, Tile(new_row, new_column), 5, false, 0)); // 0 = Rook
+					list.push_back(Move(*tile, Tile(new_row, new_column), 5, false, 3)); // 1 = Horse
+					list.push_back(Move(*tile, Tile(new_row, new_column), 5, false, 2)); // 2 = Bishop
+					list.push_back(Move(*tile, Tile(new_row, new_column), 5, false, 1)); // 3 = Queen
 
 				}
 				else
 				{
 					//Add new location to move list
-					list.push_back(Move(*tile, Tile(new_row, column), 5, false));
+					list.push_back(Move(*tile, Tile(new_row, new_column), 5, false));
 				}
 			}
 		}
@@ -85,16 +85,16 @@ public:
 
 				if (new_row == 7 || new_row == 0)
 				{
-					list.push_back(Move(*tile, Tile(new_row, column), 5, false, 0)); // 0 = Rook
-					list.push_back(Move(*tile, Tile(new_row, column), 5, false, 3)); // 1 = Horse
-					list.push_back(Move(*tile, Tile(new_row, column), 5, false, 2)); // 2 = Bishop
-					list.push_back(Move(*tile, Tile(new_row, column), 5, false, 1)); // 3 = Queen
+					list.push_back(Move(*tile, Tile(new_row, new_column), 5, false, 0)); // 0 = Rook
+					list.push_back(Move(*tile, Tile(new_row, new_column), 5, false, 3)); // 1 = Horse
+					list.push_back(Move(*tile, Tile(new_row, new_column), 5, false, 2)); // 2 = Bishop
+					list.push_back(Move(*tile, Tile(new_row, new_column), 5, false, 1)); // 3 = Queen
 
 				}
 				else
 				{
 					//Add new location to move list
-					list.push_back(Move(*tile, Tile(new_row, column), 5, false));
+					list.push_back(Move(*tile, Tile(new_row, new_column), 5, false));
 				}
 			}
 		}

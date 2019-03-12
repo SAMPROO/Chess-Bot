@@ -1,13 +1,8 @@
 ﻿  Chess-Bot-Project.cpp
-  ChessPiece.cpp
-  MinMaxReturn.h
-  Move.cpp
-  MoveStack.cpp
   Position.cpp
   UI.cpp
   Generating Code...
-c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(360): warning C4715: 'my_compare': not all control paths return a value
-c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(857): warning C4715: 'getGameTableValue': not all control paths return a value
-Chess-Bot-Project.obj : error LNK2001: unresolved external symbol "public: static double Position::timer" (?timer@Position@@2NA)
-Position.obj : error LNK2001: unresolved external symbol "public: static double Position::timer" (?timer@Position@@2NA)
-C:\GitHub\Chess-Bot\Chess-Bot-Solution\x64\Debug\Chess-Bot-Project.exe : fatal error LNK1120: 1 unresolved externals
+c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(401): warning C4715: 'my_compare': not all control paths return a value
+c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(930): warning C4715: 'Position::calculateCastlingValue': not all control paths return a value
+c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(896): warning C4715: 'getGameTableValue': not all control paths return a value
+  Chess-Bot-Project.vcxproj -> C:\GitHub\Chess-Bot\Chess-Bot-Solution\x64\Debug\Chess-Bot-Project.exe

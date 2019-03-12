@@ -1,6 +1,7 @@
 #pragma once
 #include "ChessPiece.h"
-#include "MoveStack.h"
+//#include "MoveStack.h"
+#include "PositionStack.h"
 #include "MinMaxReturn.h"
 #include "PieceSquareValues.h"
 
@@ -12,7 +13,7 @@ class Position {
 
 public:
 	//Constructor sets the starting position on the board
-	Position(MoveStack * moveStack);
+	Position(PositionStack * positionStack);
 	ChessPiece * board[8][8];
 
 	static ChessPiece *wKing, *wQueen, *wRook, *wBishop, *wHorse, *wPawn;	// Valkeat nappulat.
@@ -46,17 +47,19 @@ public:
 
 	bool isTileThreatened(Tile tile, int color);
 
-	MoveStack * _moveStack;
+	PositionStack * _positionStack;
 
 	double endResult(int turn);
-	double evaluate(int turn);
+	double evaluate(int turn, Move move);
 	MinMaxReturn minimax(int depth, double alpha, double beta, int turn, Move currentMove);
 	pair<double, double> calculateMaterialValue();
 	double calculatePieceTileValue(/*Move currentMove, int turn*/bool materialValue);
+	double calculateCastlingValue(Move move);
 
-	static const PieceTileValue _pieceTileValues;
-	
 	double inf = numeric_limits<double>::infinity();
 	//static double timer;
+
+	bool _castlingBools[6] = { 0,0,0,0,0,0 };
+	int _turn = 0;
 
 };

@@ -163,6 +163,7 @@
     <ClCompile Include="Position.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PositionStack.cpp" />
     <ClCompile Include="Tile.cpp" />
     <ClCompile Include="UI.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -178,6 +179,7 @@
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="PieceSquareValues.h" />
     <ClInclude Include="Position.h" />
+    <ClInclude Include="PositionStack.h" />
     <ClInclude Include="Queen.h" />
     <ClInclude Include="Rook.h" />
     <ClInclude Include="Tile.h" />
