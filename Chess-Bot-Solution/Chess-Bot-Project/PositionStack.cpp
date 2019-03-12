@@ -42,10 +42,12 @@ bool PositionStack::isEmpty()
 
 Move PositionStack::getMove()
 {
-	return _previousMove;
+	return _top->_previousMove;
 }
 
 Position * PositionStack::getPosition()
 {
-	return _position;
+	if (!isEmpty())
+		return _top->_position;
+	return NULL;
 }

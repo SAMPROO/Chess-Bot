@@ -40,20 +40,20 @@ Position::Position(PositionStack *positionStack, long maxTime) {
 			board[i][j] = NULL;
 
 	// Initialization of white pieces 
-	board[0][0] = wRook;
+	//board[0][0] = wRook;
 	/*board[1][0] = wHorse;
 	board[2][0] = wBishop;
 	board[3][0] = wQueen;*/
 	board[4][0] = wKing;
 	/*board[5][0] = wBishop;
 	board[6][0] = wHorse;*/
-	board[7][0] = wRook;
+	//board[7][0] = wRook;
 
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
-	{/*
+	{
 		board[i][1] = wPawn;
-		board[i][6] = bPawn;*/
+		board[i][6] = bPawn;
 	}
 
 	//board[0][7] = bRook;
@@ -238,7 +238,7 @@ void Position::undoMove()
 	if (_positionStack->isEmpty())
 		return;
 
-	Position *previousPosition = _positionStack->peak()->getPosition();
+	Position *previousPosition = _positionStack->getPosition();
 
 	_positionStack->pop();
 
@@ -372,7 +372,7 @@ void Position::setLongRookMoved()
 //enum startOrder { R, H, B, Q, K, P, Sr, Lr };
 
 							   // R, H, B, Q, K, P, 0-0, 0-0-0
-int middleGamePieceOrder[8]	=	{ 7, 1, 2, -1, 6, 0, 5, 4 };
+int middleGamePieceOrder[8]	=	{ 7, 1, 2, 3, 6, 0, 5, 4 };
 int endGamePieceOrder[8]	=	{ 1, 2, 4, 0, 7, 3, 6, 5 };
 
 bool inEndGamePhase;
@@ -384,10 +384,9 @@ bool my_compare(Move &a, Move &b)
 	case 0:
 		return middleGamePieceOrder[a._piece] < middleGamePieceOrder[b._piece];
 	case 1:
-		return endGamePieceOrder[a._piece] < middleGamePieceOrder[b._piece];
-	default:
-		return 0;
+		return endGamePieceOrder[a._piece] < endGamePieceOrder[b._piece];
 	}	
+		return 0;
 }
 
 void Position::getLegalMoves(list<Move>& moves, int turn)
