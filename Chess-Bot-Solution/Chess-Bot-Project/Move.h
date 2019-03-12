@@ -15,13 +15,13 @@ public:
 	bool isEnPassant();
 	int isPromoted();
 
-	int _piece;
+	int _piece = -1;
 
 private:
 	Tile _origin;
 	Tile _destination;
 	bool _shortRook = false;
 	bool _longRook = false;
-	bool _enPassant;
-	int _promoted;
+	bool _enPassant = false;
+	int _promoted = -1;
 };

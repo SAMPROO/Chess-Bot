@@ -70,10 +70,8 @@ Move UI::getOpponentMove(string inputOpponentMove, bool colorSelection)
 
 		for (int j = 0; j < 2; i += 3, j++)
 		{
-			char column = inputOpponentMove[i]; // abc..
-			char row = inputOpponentMove[i + 1]; // 123..
-			int columnInt = column - 'a';
-			int rowInt = row - '1';
+			int columnInt = inputOpponentMove[i] - 'a';
+			int rowInt = inputOpponentMove[i + 1] - '1';
 
 			rowInt = colorSelection ? rowInt : 7 - rowInt;
 

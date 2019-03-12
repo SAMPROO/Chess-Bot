@@ -19,8 +19,8 @@ public:
 	Move getMove();
 
 private:
-	PositionStack* _top;
-	PositionStack* _next;
-	Position * _position;
+	PositionStack* _top = NULL;
+	PositionStack* _next = NULL;
+	Position * _position = NULL;
 	Move _previousMove;
 };

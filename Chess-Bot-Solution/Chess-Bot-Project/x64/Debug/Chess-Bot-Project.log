@@ -1,0 +1,12 @@
+﻿  Chess-Bot-Project.cpp
+  ChessPiece.cpp
+  MinMaxReturn.h
+  Move.cpp
+  MoveStack.cpp
+  Position.cpp
+  PositionStack.cpp
+  Tile.cpp
+  UI.cpp
+c:\users\topia\documents\chessbot\chess-bot\chess-bot-solution\chess-bot-project\pawn.h(46): warning C6385: Reading invalid data from 'position->board[column]':  the readable size is '64' bytes, but '72' bytes may be read.
+c:\users\topia\documents\chessbot\chess-bot\chess-bot-solution\chess-bot-project\ui.cpp(17): warning C6031: Return value ignored: '_setmode'.
+c:\users\topia\documents\chessbot\chess-bot\chess-bot-solution\chess-bot-project\ui.cpp(74): warning C26451: Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).

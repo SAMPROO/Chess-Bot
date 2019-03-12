@@ -9,6 +9,6 @@ public:
 	int getRow();
 	int getColumn();
 private:
-	int _column;
-	int _row;
+	int _column = 0;
+	int _row = 0;
 };

@@ -31,8 +31,8 @@ public:
 	void setEnPassant(ChessPiece * enPassant);
 
 private:
-	MoveStack* _top;
-	MoveStack* _next;
+	MoveStack* _top = NULL;
+	MoveStack* _next = NULL;
 
 	bool castlingBools[6] = { 0,0,0,0,0,0 };
 
