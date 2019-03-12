@@ -1,8 +1,18 @@
-﻿  Position.cpp
+﻿  main.cpp
+  ChessPiece.cpp
+  MinMaxReturn.h
+  Move.cpp
+  MoveStack.cpp
+  Position.cpp
+  PositionStack.cpp
+  Tile.cpp
+  UI.cpp
   Generating code
-c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(389): warning C4715: 'my_compare': not all control paths return a value
-  1 of 418 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+c:\users\topia\documents\chessbotmaster\chess-bot-solution\chess-bot-project\position.cpp(389): warning C4715: 'my_compare': not all control paths return a value
+c:\users\topia\documents\chessbotmaster\chess-bot-solution\chess-bot-project\position.cpp(879): warning C4715: 'getGameTableValue': not all control paths return a value
+c:\users\topia\documents\chessbotmaster\chess-bot-solution\chess-bot-project\position.cpp(913): warning C4715: 'Position::calculateCastlingValue': not all control paths return a value
+  415 of 418 functions (99.3%) were compiled, the rest were copied from previous compilation.
+    13 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-  Chess-Bot-Project.vcxproj -> C:\GitHub\Chess-Bot\Chess-Bot-Solution\x64\Release\Chess-Bot-Project.exe
+  Chess-Bot-Project.vcxproj -> C:\Users\topia\Documents\ChessBotMaster\Chess-Bot-Solution\x64\Release\Chess-Bot-Project.exe
