@@ -1,6 +1,6 @@
 #include "Move.h"
 
-Move::Move(Tile origin, Tile destination, int piece, bool enPassant, bool promoted) {
+Move::Move(Tile origin, Tile destination, int piece, bool enPassant, int promoted) {
 	_origin = origin;
 	_destination = destination;
 	_enPassant = enPassant;

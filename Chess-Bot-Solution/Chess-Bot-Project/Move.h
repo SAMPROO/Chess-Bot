@@ -3,7 +3,7 @@
 
 class Move {
 public:
-	Move(Tile, Tile, int piece, bool enPassant = false, bool promoted = false);
+	Move(Tile, Tile, int piece, bool enPassant = false, int promoted = -1);
 	Move() {}
 	Move(bool shortRook, bool longRook, int piece); // Castling
 	bool operator ==(const Move& rhs) const;
@@ -23,5 +23,5 @@ private:
 	bool _shortRook = false;
 	bool _longRook = false;
 	bool _enPassant;
-	bool _promoted;
+	int _promoted;
 };

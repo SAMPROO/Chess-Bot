@@ -68,7 +68,7 @@ Position::Position(MoveStack * moveStack) {
 	_blackKing = &Tile(7, 4);*/
 }
 
-void Position::updatePosition(Move* move, bool realMove)
+void Position::updatePosition(Move* move, bool realMove, bool aiMove)
 {
 	if (realMove)
 		_moveStack->push(*move);
@@ -155,40 +155,68 @@ void Position::updatePosition(Move* move, bool realMove)
 			
 			if (move->isEnPassant())
 				_moveStack->setEnPassant(board[destinationColumn][destinationRow + (turn ? 1 : -1)]);
-
-			if (move->isPromoted())
+		}
+		if (move->isPromoted() > -1)
+		{
+			switch (move->isPromoted())
 			{
-				wstring Q = turn ? bQueen->getUnicode() : wQueen->getUnicode();
-				wstring H = turn ? bHorse->getUnicode() : wHorse->getUnicode();
-				wstring R = turn ? bRook->getUnicode() : wRook->getUnicode();
-				wstring B = turn ? bBishop->getUnicode() : wBishop->getUnicode();
-
-				wcout << "\n" << Q << " " << H << " " << R << " " << B
-					<< "\nQ H R B" 
-					<< "\n\nPromote to: " ;
-
-				char selection;
-				do{
-					cin >> selection;
-					selection = tolower(selection);
-				} while (selection != 'q' && selection != 'h' && selection != 'r' && selection != 'b');
-
-				switch (selection)
-				{
-				case 'q':
-					chessPiece = turn ? bQueen : wQueen;
-					break;
-				case 'h':
-					chessPiece = turn ? bHorse : wHorse;
-					break;
-				case 'r':
-					chessPiece = turn ? bRook : wRook;
-					break;
-				case 'b':
-					chessPiece = turn ? bBishop : wBishop;
-					break;
-				}
+			case 0:
+				chessPiece = turn ? bRook : wRook;
+				break;
+			case 1: 
+				chessPiece = turn ? bHorse : wHorse;
+				break;
+			case 2:
+				chessPiece = turn ? bBishop : wBishop;
+				break;
+			case 3:
+				chessPiece = turn ? bQueen : wQueen;
+				break;
 			}
+
+			//if (aiMove == false)
+			//{
+			//	wstring Q = turn ? bQueen->getUnicode() : wQueen->getUnicode();
+			//	wstring H = turn ? bHorse->getUnicode() : wHorse->getUnicode();
+			//	wstring R = turn ? bRook->getUnicode() : wRook->getUnicode();
+			//	wstring B = turn ? bBishop->getUnicode() : wBishop->getUnicode();
+
+			//	wcout << "\n" << Q << " " << H << " " << R << " " << B
+			//		<< "\nQ H R B"
+			//		<< "\n\nPromote to: ";
+
+			//	char selection;
+			//	do {
+			//		cin >> selection;
+			//		selection = tolower(selection);
+			//	} while (selection != 'q' && selection != 'h' && selection != 'r' && selection != 'b');
+
+			//	switch (selection)
+			//	{
+			//	case 'q':
+			//		chessPiece = turn ? bQueen : wQueen;
+			//		break;
+			//	case 'h':
+			//		chessPiece = turn ? bHorse : wHorse;
+			//		break;
+			//	case 'r':
+			//		chessPiece = turn ? bRook : wRook;
+			//		break;
+			//	case 'b':
+			//		chessPiece = turn ? bBishop : wBishop;
+			//		break;
+			//	}
+			//}
+			//else
+			//{
+			//	//AI CHOOSES WHICH TO PROMOTE TO
+			//	chessPiece = turn ? bQueen : wQueen;
+			//	chessPiece = turn ? bHorse : wHorse;
+
+			//	Position newPosition = *this;
+			//	newPosition.updatePosition(move, false);
+			//}
+
 		}
 
 		if (move->isEnPassant())
@@ -197,6 +225,8 @@ void Position::updatePosition(Move* move, bool realMove)
 		board[destinationColumn][destinationRow] = chessPiece;
 		board[originColumn][originRow] = NULL;
 	}
+
+	
 
 	if (realMove)
 		changeTurn();
@@ -570,10 +600,16 @@ double Position::endResult(int turn)
 		}
 	}
 
-	if (isTileThreatened(Tile(kx, ky)/*king*/, !turn))
+	if (isTileThreatened(Tile(kx, ky)/*king*/, !turn)) {
+
+		wcout << "!!!DRAW!!!" << endl;
 		return 0; // tasapeli (patti)
+	}
 	else
+	{
+		wcout << "!!!CHECKMATE " << (turn ? "WHITE" : "BLACK") << " WON!!!" << endl;
 		return turn ? 1000000 : -1000000;	// matti
+	}
 }
 
 /*

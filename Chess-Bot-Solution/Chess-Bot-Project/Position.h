@@ -21,7 +21,7 @@ public:
 	/*Tile* _whiteKing;
 	Tile* _blackKing;*/
 
-	void updatePosition(Move* move, bool realMove = true);
+	void updatePosition(Move* move, bool realMove = true, bool aiMove = false);
 	void undoMove();
 
 	int getTurn();
