@@ -1,8 +1,8 @@
 ﻿  Position.cpp
+c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(390): warning C4809: switch statement has redundant 'default' label; all possible 'case' labels are given
   Generating code
-c:\github\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(389): warning C4715: 'my_compare': not all control paths return a value
   1 of 418 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    3 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Chess-Bot-Project.vcxproj -> C:\GitHub\Chess-Bot\Chess-Bot-Solution\x64\Release\Chess-Bot-Project.exe
