@@ -17,7 +17,7 @@ public:
 	bool isEmpty();
 
 	Move getMove();
-
+	Position *getPosition();
 private:
 	PositionStack* _top = NULL;
 	PositionStack* _next = NULL;

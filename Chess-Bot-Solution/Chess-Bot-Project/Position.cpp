@@ -30,9 +30,10 @@ ChessPiece* Position::bKing = new King(L"\u265A", 1, BK, kingValue);
 ChessPiece* Position::bQueen = new Queen(L"\u265B", 1, BQ, queenValue);
 ChessPiece* Position::bPawn = new Pawn(L"\u265F", 1, BP, pawnValue);
 
-Position::Position(/*MoveStack * moveStack*/PositionStack *positionStack) {
+Position::Position(PositionStack *positionStack, long maxTime) {
 
 	_positionStack = positionStack;
+	_maxTime = maxTime;
 
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
@@ -44,21 +45,9 @@ Position::Position(/*MoveStack * moveStack*/PositionStack *positionStack) {
 	board[2][0] = wBishop;
 	board[3][0] = wQueen;
 	board[4][0] = wKing;
-	//board[5][0] = wBishop;
-	//board[6][0] = wHorse;
+	board[5][0] = wBishop;
+	board[6][0] = wHorse;
 	board[7][0] = wRook;
-
-	//board[2][2] = wPawn;
-	////board[3][2] = wPawn;
-	//board[4][2] = wPawn;
-
-
-
-	//board[2][3] = bPawn;
-	//board[3][3] = bPawn;
-	//board[4][3] = bPawn;
-
-
 
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
@@ -72,12 +61,9 @@ Position::Position(/*MoveStack * moveStack*/PositionStack *positionStack) {
 	board[2][7] = bBishop;
 	board[3][7] = bQueen;
 	board[4][7] = bKing;
-	//board[5][7] = bBishop;
-	//board[6][7] = bHorse;
+	board[5][7] = bBishop;
+	board[6][7] = bHorse;
 	board[7][7] = bRook;
-
-	/*_whiteKing = &Tile(0, 4);
-	_blackKing = &Tile(7, 4);*/
 }
 
 void Position::updatePosition(Move* move, bool realMove, bool aiMove)
@@ -252,20 +238,22 @@ void Position::undoMove()
 	if (_positionStack->isEmpty())
 		return;
 
-	Position previousPosition = _positionStack->peak();
+	Position *previousPosition = _positionStack->peak()->getPosition();
 
 	_positionStack->pop();
 
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
-			board[i][j] = previousPosition.board[i][j];
+			board[i][j] = previousPosition->board[i][j];
 
 	for (int i = 0; i < 6; i++)
-		_castlingBools[i] = previousPosition._castlingBools[i];
+		_castlingBools[i] = previousPosition->_castlingBools[i];
 		
-	_turn = previousPosition._turn;
+	_turn = previousPosition->_turn;
 
 	_positionStack->pop();
+
+	delete previousPosition;
 
 	//Move move = _positionStack->getMove();
 
@@ -384,8 +372,8 @@ void Position::setLongRookMoved()
 //enum startOrder { R, H, B, Q, K, P, Sr, Lr };
 
 							   // R, H, B, Q, K, P, 0-0, 0-0-0
-int middleGamePieceOrder[8]	=	{ 7, 1, 2, 3, 6, 0, -1, -1 };
-int endGamePieceOrder[8]	=	{ 2, 3, 5, 0, 6, 4, 5, 7 };
+int middleGamePieceOrder[8]	=	{ 7, 1, 2, 3, 6, 0, 5, 4 };
+int endGamePieceOrder[8]	=	{ 1, 2, 4, 0, 7, 3, 6, 5 };
 
 bool inEndGamePhase;
 
@@ -563,7 +551,7 @@ bool Position::isTileThreatened(Tile tile, int enemyColor)
 	return false;
 }
 
-MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, Move currentMove)
+MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, Move currentMove, long startTime)
 {
 	MinMaxReturn returnValue;
 
@@ -585,11 +573,15 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		return returnValue;
 	}
 
-	/*if (timer <= 0 && &returnValue != NULL)
-	{
-		return returnValue;
-	}*/
+	if (&returnValue != NULL) {
 
+		long time = clock();
+		long timeGone = time - startTime;
+
+		if (_maxTime - (timeGone * 0.001f) <= 0)
+			return returnValue;
+
+	}
 	// alustetaan paluuarvo huonoimmaksi mahdolliseksi.
 	returnValue._evaluationValue = (turn ? inf : -inf);
 
@@ -600,17 +592,8 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		Position newPosition = *this;
 		newPosition.updatePosition(&move, false);
 
-		//Time to complete MinMaxReturn
-		/*auto begin = chrono::high_resolution_clock::now();*/
-
 		// Rekursiivinen kutsu.
-		MinMaxReturn value = newPosition.minimax(depth - 1, alpha, beta, !turn, move);
-
-		/*auto end = chrono::high_resolution_clock::now();
-		auto dur = end - begin;
-		auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
-
-		timer -= ms * 0.001f;*/
+		MinMaxReturn value = newPosition.minimax(depth - 1, alpha, beta, !turn, move, startTime);		
 
 		// Tutkitaan ollaan löydetty uusi paras siirto.
 		if ((turn && value._evaluationValue < returnValue._evaluationValue) || 
@@ -710,7 +693,7 @@ double Position::evaluate(int turn, Move move)
 	double castlingValue = calculateCastlingValue(move);
 
 	// Palautetaan eri tekijöiden painotettu summa.
-	return materialMultiplier * material + pieceTileMultiplier * pieceTileValue - castlingValue * pieceTileMultiplier; // + linjaKerroin * linjat + ... jne
+	return materialMultiplier * material - pieceTileMultiplier * pieceTileValue - castlingValue * pieceTileMultiplier; // + linjaKerroin * linjat + ... jne
 }
 
 

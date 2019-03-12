@@ -44,3 +44,8 @@ Move PositionStack::getMove()
 {
 	return _previousMove;
 }
+
+Position * PositionStack::getPosition()
+{
+	return _position;
+}
