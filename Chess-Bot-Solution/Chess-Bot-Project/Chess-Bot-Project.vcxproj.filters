@@ -39,6 +39,9 @@
     <ClCompile Include="MinMaxReturn.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="PositionStack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChessPiece.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PieceSquareValues.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionStack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
