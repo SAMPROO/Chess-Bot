@@ -1,8 +1,7 @@
-﻿  Chess-Bot-Project.cpp
-  Position.cpp
-  Generating code
-  3 of 433 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+﻿  Generating code
+c:\users\topia\documents\chessbot\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(896): warning C4715: 'getGameTableValue': not all control paths return a value
+c:\users\topia\documents\chessbot\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(401): warning C4715: 'my_compare': not all control paths return a value
+c:\users\topia\documents\chessbot\chess-bot\chess-bot-solution\chess-bot-project\position.cpp(930): warning C4715: 'Position::calculateCastlingValue': not all control paths return a value
+  All 427 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
-  Chess-Bot-Project.vcxproj -> C:\GitHub\Chess-Bot\Chess-Bot-Solution\x64\Release\Chess-Bot-Project.exe
+  Chess-Bot-Project.vcxproj -> C:\Users\topia\Documents\ChessBot\Chess-Bot\Chess-Bot-Solution\x64\Release\Chess-Bot-Project.exe
