@@ -38,9 +38,9 @@ void UI::drawBoard()
 			else
 			{
 				wcout << "   ";
-			}			
+			}
 
-			if(j < 7)
+			if (j < 7)
 				color = !color;
 		}
 
@@ -50,7 +50,7 @@ void UI::drawBoard()
 	wcout << "  a  b  c  d  e  f  g  h";
 }
 
-Move UI::getOpponentMove(string inputOpponentMove) 
+Move UI::getOpponentMove(string inputOpponentMove)
 {
 	Move opponentMove;
 
@@ -66,12 +66,6 @@ Move UI::getOpponentMove(string inputOpponentMove)
 	{
 		int i = 0;
 
-		if (inputOpponentMove.length() == 6)
-		{
-			//char value = inputOpponentMove[i]; // T/R/L/D/K 
-			i++; 
-		}
-		
 		Tile tiles[2];
 
 		for (int j = 0; j < 2; i += 3, j++)
@@ -86,8 +80,30 @@ Move UI::getOpponentMove(string inputOpponentMove)
 
 			tiles[j] = Tile(rowInt, columnInt);
 		}
-		
-		opponentMove = Move(tiles[0], tiles[1], 0);
+
+		int promotedTo = -1;
+
+		if (inputOpponentMove.length() == 6)
+		{
+			// T/R/L/D
+			switch (inputOpponentMove[6])
+			{
+			case 'T':
+				promotedTo = 0;
+				break;
+			case 'R':
+				promotedTo = 1;
+				break;
+			case 'L':
+				promotedTo = 2;
+				break;
+			case 'D':
+				promotedTo = 3;
+				break;
+			}
+		}
+
+		opponentMove = Move(tiles[0], tiles[1], 0, 0, promotedTo);
 	}
 
 	return opponentMove;
