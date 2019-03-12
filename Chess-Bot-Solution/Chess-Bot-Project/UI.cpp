@@ -11,7 +11,7 @@ UI::UI(Position* position)
 	_position = position;
 }
 
-void UI::drawBoard()
+void UI::drawBoard(bool colorSelection)
 {
 	// Enables wcout to print unicode
 	_setmode(_fileno(stdout), _O_U16TEXT);
@@ -29,7 +29,7 @@ void UI::drawBoard()
 		{
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color ? 96 : 240);
 
-			ChessPiece* temp = _position->board[j][i];
+			ChessPiece* temp = _position->board[j][colorSelection ? i : (7 - i)];
 
 			if (temp)
 			{
@@ -50,7 +50,7 @@ void UI::drawBoard()
 	wcout << "  a  b  c  d  e  f  g  h";
 }
 
-Move UI::getOpponentMove(string inputOpponentMove)
+Move UI::getOpponentMove(string inputOpponentMove, bool colorSelection)
 {
 	Move opponentMove;
 
@@ -74,6 +74,8 @@ Move UI::getOpponentMove(string inputOpponentMove)
 			char row = inputOpponentMove[i + 1]; // 123..
 			int columnInt = column - 'a';
 			int rowInt = row - '1';
+
+			rowInt = colorSelection ? rowInt : 7 - rowInt;
 
 			if (rowInt < 0 || rowInt > 7 || columnInt < 0 || columnInt > 7)
 				return opponentMove;
