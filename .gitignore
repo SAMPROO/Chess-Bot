@@ -5,3 +5,5 @@ Chess-Bot-Solution/.vs/Chess-Bot-Solution/v15/Browse.VC.opendb
 Chess-Bot-Solution/.vs/Chess-Bot-Solution/v15/ipch/2e46617bdf6733e2.ipch
 Chess-Bot-Solution/.vs/Chess-Bot-Solution/v15/ipch/AutoPCH/30243d8dd3cd2af4/TEHT3.ipch
 Chess-Bot-Solution/.vs/Chess-Bot-Solution/v15/ipch/AutoPCH/c3b1d9cb51635f14/TEHT1.ipch
+*.ipch
+*.exe
