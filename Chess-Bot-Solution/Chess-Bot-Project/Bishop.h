@@ -8,7 +8,7 @@ public:
 
 	Bishop(std::wstring unicode, int color, int code, double value) : ChessPiece(unicode, color, code, value) {}
 
-	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
+	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color, int pieceValue = 2)
 	{
 		int row = tile->getRow();
 		int column = tile->getColumn();
@@ -29,14 +29,14 @@ public:
 			//Is new location empty?
 			if (n == nullptr)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column), 2));
+				list.push_back(Move(origin, Tile(new_row, new_column), pieceValue));
 				continue;
 			}
 
 			// Is location occupied by opponent?
 			else if (n->getColor() != color)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column), 2));
+				list.push_back(Move(origin, Tile(new_row, new_column), pieceValue));
 			}
 
 			break;
@@ -56,14 +56,14 @@ public:
 			//Is new location empty?
 			if (n == nullptr)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column), 2));
+				list.push_back(Move(origin, Tile(new_row, new_column), pieceValue));
 				continue;
 			}
 
 			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column), 2));
+				list.push_back(Move(origin, Tile(new_row, new_column), pieceValue));
 			}
 
 			break;
@@ -83,14 +83,14 @@ public:
 			//Is new location empty?
 			if (n == nullptr)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column), 2));
+				list.push_back(Move(origin, Tile(new_row, new_column), pieceValue));
 				continue;
 			}
 
 			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column), 2));
+				list.push_back(Move(origin, Tile(new_row, new_column), pieceValue));
 			}
 
 			break;
@@ -110,14 +110,14 @@ public:
 			//Is new location empty?
 			if (n == nullptr)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column), 2));
+				list.push_back(Move(origin, Tile(new_row, new_column), pieceValue));
 				continue;
 			}
 
 			// Is location occupied by opponent?
 			if (n->getColor() != color)
 			{
-				list.push_back(Move(origin, Tile(new_row, new_column), 2));
+				list.push_back(Move(origin, Tile(new_row, new_column), pieceValue));
 			}
 
 			break;

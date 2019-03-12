@@ -31,7 +31,8 @@ public:
 		std::list<Move>& list,
 		Tile* tile,
 		Position* position,
-		int color
+		int color,
+		int pieceValue = NULL
 	) = 0;
 };
 

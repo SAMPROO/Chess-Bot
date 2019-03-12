@@ -8,7 +8,7 @@ public:
 
 	Rook(std::wstring unicode, int color, int code, double value) : ChessPiece(unicode, color, code, value) {}
 
-	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
+	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color, int pieceValue = 0)
 	{
 		//Current location
 		int row = tile->getRow();
@@ -25,7 +25,7 @@ public:
 			if (n == NULL)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(row, i), 0));
+				list.push_back(Move(origin, Tile(row, i), pieceValue));
 				continue;
 			}
 
@@ -33,7 +33,7 @@ public:
 			else if (n->getColor() != color)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(row, i), 0));
+				list.push_back(Move(origin, Tile(row, i), pieceValue));
 			}
 
 			break;
@@ -48,7 +48,7 @@ public:
 			if (n == nullptr)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(row, i), 0));
+				list.push_back(Move(origin, Tile(row, i), pieceValue));
 				continue;
 			}
 
@@ -56,7 +56,7 @@ public:
 			if (n->getColor() != color)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(row, i), 0));
+				list.push_back(Move(origin, Tile(row, i), pieceValue));
 			}
 
 			break;
@@ -71,7 +71,7 @@ public:
 			if (n == nullptr)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(i, column), 0));
+				list.push_back(Move(origin, Tile(i, column), pieceValue));
 				continue;
 			}
 
@@ -79,7 +79,7 @@ public:
 			if (n->getColor() != color)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(i, column), 0));
+				list.push_back(Move(origin, Tile(i, column), pieceValue));
 			}
 
 			break;
@@ -94,7 +94,7 @@ public:
 			if (n == nullptr)
 			{
 				//Add new location to move list
-				list.push_back(Move(origin, Tile(i, column), 0));
+				list.push_back(Move(origin, Tile(i, column), pieceValue));
 				continue;
 			}
 
@@ -102,7 +102,7 @@ public:
 			if (n->getColor() != color)
 			{
 				//Add new location to move list	
-				list.push_back(Move(origin, Tile(i, column), 0));
+				list.push_back(Move(origin, Tile(i, column), pieceValue));
 			}
 
 			break;

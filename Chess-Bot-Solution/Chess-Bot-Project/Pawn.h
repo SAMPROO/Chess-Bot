@@ -8,7 +8,7 @@ public:
 
 	Pawn(std::wstring unicode, int color, int code, double value) : ChessPiece(unicode, color, code, value) {}
 
-	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
+	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color, int pieceValue)
 	{
 		//Current location
 		int row = tile->getRow();

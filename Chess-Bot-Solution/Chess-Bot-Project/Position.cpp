@@ -372,7 +372,7 @@ void Position::setLongRookMoved()
 //enum startOrder { R, H, B, Q, K, P, Sr, Lr };
 
 							   // R, H, B, Q, K, P, 0-0, 0-0-0
-int middleGamePieceOrder[8]	=	{ 7, 1, 2, 3, 6, 0, 5, 4 };
+int middleGamePieceOrder[8]	=	{ 7, 1, 2, -1, 6, 0, 5, 4 };
 int endGamePieceOrder[8]	=	{ 1, 2, 4, 0, 7, 3, 6, 5 };
 
 bool inEndGamePhase;
@@ -573,7 +573,7 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		return returnValue;
 	}
 
-	if (&returnValue != NULL) {
+	/*if (&returnValue != NULL) {
 
 		long time = clock();
 		long timeGone = time - startTime;
@@ -581,7 +581,7 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		if (_maxTime - (timeGone * 0.001f) <= 0)
 			return returnValue;
 
-	}
+	}*/
 	// alustetaan paluuarvo huonoimmaksi mahdolliseksi.
 	returnValue._evaluationValue = (turn ? inf : -inf);
 

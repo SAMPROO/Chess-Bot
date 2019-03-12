@@ -21,7 +21,7 @@ public:
 		{ 0, -1 } 
 	};
 
-	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color)
+	virtual void getMoves(std::list<Move>& list, Tile* tile, Position* position, int color, int pieceValue)
 	{
 		//Current location
 		int row = tile->getRow();
