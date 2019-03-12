@@ -9,6 +9,6 @@ class UI {
 public:
 	UI(Position* position);
 	Position* _position;
-	void drawBoard();
-	Move getOpponentMove(string inputOpponentMove);
+	void drawBoard(bool colorSelection);
+	Move getOpponentMove(string inputOpponentMove, bool colorSelection);
 };
