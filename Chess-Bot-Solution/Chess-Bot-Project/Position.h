@@ -6,8 +6,6 @@
 
 using namespace std;
 
-//class MoveStack;
-
 class Position {
 
 public:
@@ -42,9 +40,7 @@ public:
 	void getLegalMoves(std::list<Move>& moves, int turn);
 	void getRawMoves(std::list<Move>& moves, int turn);
 
-	bool isCheck(std::list<Move>& moves, int turn);
-
-	void getRawMoveAndIsCheck(std::list<Move>& moves, int turn);
+	void isCheck(std::list<Move>& moves, int turn);
 
 	void addCastling(std::list<Move>& moves, int turn);
 	void addEnPassant(std::list<Move>& moves, int turn);
@@ -62,7 +58,7 @@ public:
 	double calculateCastlingValue(Move move);
 	double calculateKingSafetyValue(bool inEndGamePhase);
 
-	long _maxTime = 3;
+	long _maxTime = 1000;
 
 	bool _castlingBools[6] = { 0,0,0,0,0,0 };
 	int _turn = 0;

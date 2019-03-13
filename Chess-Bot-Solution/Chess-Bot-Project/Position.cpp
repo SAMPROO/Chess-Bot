@@ -67,15 +67,11 @@ Position::Position() {
 
 void Position::updatePosition(Move* move, bool realMove, bool aiMove)
 {
-	/*if (realMove)
-		_moveStack->push(*move);*/
-
 	_previousMove = *move;
 
 	if (realMove)
 		_positionStack->push(new Position(*this));
 
-	//int turn = getTurn();
 	int row = _turn ? 7 : 0;
 
 	// Short Rook
@@ -85,17 +81,8 @@ void Position::updatePosition(Move* move, bool realMove, bool aiMove)
 		board[5][row] = board[7][row]; // Rook to new position
 		board[7][row] = NULL; // Clear old position
 
-		/*if (realMove)
-		{*/
 		setShortRookMoved();
 		setKingMoved();
-		//}
-
-		/*if (turn)
-			_blackKing = &Tile(row, 6);
-		else
-			_whiteKing = &Tile(row, 6);*/
-		
 	}
 	// Long Rook
 	else if (move->isLongRook()) {
@@ -104,16 +91,8 @@ void Position::updatePosition(Move* move, bool realMove, bool aiMove)
 		board[3][row] = board[0][row]; // Rook to new position
 		board[0][row] = NULL; // Clear old position
 
-		/*if (realMove) 
-		{*/
 		setLongRookMoved();
 		setKingMoved();
-		//}
-		
-		/*if (turn)
-			_blackKing = &Tile(row, 2);
-		else
-			_whiteKing = &Tile(row, 2);*/
 	}
 	// Normal move
 	else 
@@ -203,56 +182,43 @@ void Position::undoMove()
 
 int Position::getTurn()
 {
-	//return _moveStack->getTurn();
 	return _turn;
 }
 
 void Position::changeTurn()
 {
-	//_moveStack->changeTurn();
 	_turn = !_turn;
 }
 
 bool Position::getKingMoved(int color)
 {
-	//return _moveStack->getCastlingBools(color);
 	return _castlingBools[color];
 }
 
 bool Position::getShortRookMoved(int color)
 {
-	//return _moveStack->getCastlingBools(2 + color);
 	return _castlingBools[2 + color];
 }
 
 bool Position::getLongRookMoved(int color)
 {
-	//return _moveStack->getCastlingBools(4 + color);
 	return _castlingBools[4 + color];
-
 }
 
 void Position::setKingMoved()
 {
-	//_moveStack->setCastlingBools(getTurn(), true);
 	_castlingBools[_turn] = true;
 }
 
 void Position::setShortRookMoved()
 {
-	//_moveStack->setCastlingBools(2 + getTurn(), true);
 	_castlingBools[2 + _turn] = true;
-
 }
 
 void Position::setLongRookMoved()
 {
-	//_moveStack->setCastlingBools(4 + getTurn(), true);
 	_castlingBools[4 + _turn] = true;
-
 }
-
-//enum startOrder { R, H, B, Q, K, P, Sr, Lr };
 
 									   // R, H, B, Q, K, P, 0-0, 0-0-0
 int middleGamePieceOrder[8]	=			{ 7, 1, 2, 3, 6, 0, 5, 4 };
@@ -345,7 +311,7 @@ void Position::getRawMoves(std::list<Move>& moves, int turn)
 	}
 }
 
-bool Position::isCheck(std::list<Move>& moves, int turn)
+void Position::isCheck(std::list<Move>& moves, int turn)
 {
 	Tile king = turn ? _BlackKing : _WhiteKing;
 
@@ -530,14 +496,10 @@ double Position::endResult(int turn)
 	// Asemassa ei ole enää laillisia siirtoja. Etsitään siirtovuoroisen pelaajan
 	// kuningas; jos kuningas on uhattu, on pelaaja hävinnyt (muuten tasapeli, "patti").
 
-	if (isTileThreatened(turn ? _BlackKing : _WhiteKing, !turn)) {
-
+	if (isTileThreatened(turn ? _BlackKing : _WhiteKing, !turn)) 
 		return turn ? 1000000 : -1000000;	// matti
-	}
 	else
-	{
 		return 0; // tasapeli (patti)
-	}
 }
 
 /*
@@ -585,19 +547,12 @@ double Position::evaluate(int turn, Move move)
 
 	Position newPos;
 
-	
-
-	//bool queenThreatened = ((move._piece == 3) && (isTileThreatened(move.getOrigin(), turn)));
-
-	//if (queenThreatened)
-	//double middleControlValue = calculateMiddleControlValue();
-
 	// Palautetaan eri tekijöiden painotettu summa.
 	return 
-		1.0 * material - 
-		0.1 * pieceTileValue + 
+		1.0 * material + 
+		0.01 * pieceTileValue + 
 		0.1 * castlingValue + 
-		0.5 * kingProtectionValue;
+		1.0 * kingProtectionValue;
 }
 
 
@@ -612,7 +567,6 @@ pair<double, double> Position::calculateMaterialValue()
 		{
 			if (board[x][y] != NULL)
 			{
-				//board[x][y]->getColor() ? (blackValue += board[x][y]->getValue()) : (whiteValue += board[x][y]->getValue());
 
 				if (board[x][y]->getColor() )
 					blackValue += board[x][y]->getValue();
@@ -627,7 +581,7 @@ pair<double, double> Position::calculateMaterialValue()
 
 
 
-const int pawnMiddleGameTable[/*64*/] = {
+const int pawnMiddleGameTable[] = {
 		0, 0, 0, 0, 0, 0, 0, 0,
 		-21, -16, -6, -1, -1, -6, -16, -21,
 		-21, -16, -6, 4, 4, -6, -16, -21,
@@ -782,7 +736,7 @@ double getGameTableValue(int index, int code, bool inEndGamePhase3)
 
 	case BP:
 	case WP:
-		return inEndGamePhase3 ? pawnEndGameTable[index] : pawnMiddleGameTable[index];
+			return inEndGamePhase3 ? pawnEndGameTable[index] : pawnMiddleGameTable[index];
 	default:
 		return 0;
 	}
@@ -810,7 +764,16 @@ double Position::calculatePieceTileValueAndCenterControl(bool inEndGamePhase4)
 		{
 			if (board[x][y] != NULL)
 			{
-				int index = y * 9 + x;
+				int index;
+
+				if (x == 0 && y == 0)
+					index = y * 8 + x;
+				else if (x == 0 && y != 0)
+					index = y * 8;
+				else if (x != 0 && y == 0)
+					index = x;
+				else if (x != 0 && y != 0)
+					index = y * 8 + x;
 
 				if (board[x][y]->getColor())					
 					blackValue += getGameTableValue(index, board[x][y]->getCode(), inEndGamePhase4) + middleControlTable[index];
@@ -827,10 +790,10 @@ double Position::calculateCastlingValue(Move currentMove)
 {
 	// Short Rook
 	if (currentMove.isShortRook())
-		return 130;
+		return 1030;
 	// Long Rook
 	else if (currentMove.isLongRook())
-		return 150;
+		return 1050;
 	else
 		return 0;
 }
@@ -866,86 +829,3 @@ double Position::calculateKingSafetyValue(bool inEndGamePhase5)
 
 	return value;
 }
-
-//double Position::calculatePieceTileValue(Move currentMove, int turn)
-//{
-//	int row = getTurn() ? 7 : 0;
-//
-//	// Short Rook
-//	if (currentMove.isShortRook())
-//		return 50;
-//	// Long Rook
-//	else if (currentMove.isLongRook())
-//		return 60;
-//
-//	int originColumn = currentMove.getOrigin().getColumn();
-//	int originRow = currentMove.getOrigin().getRow();
-//
-//	int destinationColumn = currentMove.getDestination().getColumn();
-//	int destinationRow = currentMove.getDestination().getRow();
-//
-//	ChessPiece *chessPiece = board[destinationColumn][destinationRow];
-//
-//	int color = chessPiece->getColor();
-//
-//	if (color)
-//	{
-//		/*destinationIndex = 63 - destinationIndex;
-//		originIndex = 63 - originIndex;*/
-//
-//		originColumn = 7 - originColumn;
-//		originRow = 7 - originRow;
-//
-//		destinationColumn = 7 - destinationColumn;
-//		destinationRow = 7 - destinationRow;
-//	}
-//
-//	int destinationIndex = destinationRow * 9 + destinationColumn;
-//	int originIndex = originRow * 9 + originColumn;
-//
-//	int pieceTileValue = 0;
-//
-//	switch (chessPiece->getCode())
-//	{
-//	case BR:
-//	case WR:
-//		if (rookMiddleGameTable[originIndex] < rookMiddleGameTable[destinationIndex])
-//			pieceTileValue = rookMiddleGameTable[destinationIndex];
-//		break;
-//
-//	case BH:
-//	case WH:
-//		if (horseMiddleGameTable[originIndex] < horseMiddleGameTable[destinationIndex])
-//			pieceTileValue = horseMiddleGameTable[destinationIndex];
-//		break;
-//
-//	case BB:
-//	case WB:
-//		if (bishopMiddleGameTable[originIndex] < bishopMiddleGameTable[destinationIndex])
-//			pieceTileValue = bishopMiddleGameTable[destinationIndex];
-//		break;
-//
-//	case BQ:
-//	case WQ:
-//		if (queenMiddleGameTable[originIndex] < queenMiddleGameTable[destinationIndex])
-//			pieceTileValue = queenMiddleGameTable[destinationIndex];
-//		break;
-//
-//	case BK:
-//	case WK:
-//		if (kingMiddleGameTable[originIndex] < kingMiddleGameTable[destinationIndex])
-//			pieceTileValue = kingMiddleGameTable[destinationIndex];
-//		break;
-//
-//	case BP:
-//	case WP:
-//		if (pawnMiddleGameTable[originIndex] < pawnMiddleGameTable[destinationIndex])
-//			pieceTileValue = pawnMiddleGameTable[destinationIndex];
-//		break;
-//	}
-//
-//	return (color ? -1 : 1) * pieceTileValue;
-//}
-
-
-
