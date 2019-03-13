@@ -51,18 +51,18 @@ Position::Position() {
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
 	{
-		board[i][1] = wPawn;
-		board[i][6] = bPawn;
+		/*board[i][1] = wPawn;
+		board[i][6] = bPawn;*/
 	}
 
-	board[0][7] = bRook;
+	/*board[0][7] = bRook;
 	board[1][7] = bHorse;
-	board[2][7] = bBishop;
+	board[2][7] = bBishop;*/
 	board[3][7] = bQueen;
 	board[4][7] = bKing;
-	board[5][7] = bBishop;
+	/*board[5][7] = bBishop;
 	board[6][7] = bHorse;
-	board[7][7] = bRook;
+	board[7][7] = bRook;*/
 }
 
 void Position::updatePosition(Move* move, bool realMove, bool aiMove)
@@ -376,22 +376,42 @@ void Position::setLongRookMoved()
 
 //enum startOrder { R, H, B, Q, K, P, Sr, Lr };
 
-							   // R, H, B, Q, K, P, 0-0, 0-0-0
-int middleGamePieceOrder[8]	=	{ 7, 1, 2, 3, 6, 0, 5, 4 };
-int endGamePieceOrder[8]	=	{ 1, 2, 4, 0, 7, 3, 6, 5 };
+									   // R, H, B, Q, K, P, 0-0, 0-0-0
+int middleGamePieceOrder[8]	=			{ 7, 1, 2, 3, 6, 0, 5, 4 };
+int endGamePieceOrder[8]	=			{ 1, 2, 4, 0, 7, 3, 6, 5 };
+
+int queenThreatenedMiddleGame[8]	=	{ 3, 2, 4, 0, 7, 1, 6, 5 };
+int queenThreatenedEndGame[8]		=	{ 1, 2, 4, 0, 7, 3, 6, 5 };
+
 
 bool inEndGamePhase;
+bool queenThreatened;
 
 bool my_compare(Move &a, Move &b)
 {
-	switch (inEndGamePhase)
+	if (queenThreatened)
 	{
-	case 0:
-		return middleGamePieceOrder[a._piece] < middleGamePieceOrder[b._piece];
-	case 1:
-		return endGamePieceOrder[a._piece] < endGamePieceOrder[b._piece];
-	}	
+		switch (inEndGamePhase)
+		{
+		case 0:
+			return queenThreatenedMiddleGame[a._piece] < queenThreatenedMiddleGame[b._piece];
+		case 1:
+			return queenThreatenedEndGame[a._piece] < queenThreatenedEndGame[b._piece];
+		}
 		return 0;
+	}
+	else
+	{
+		switch (inEndGamePhase)
+		{
+		case 0:
+			return middleGamePieceOrder[a._piece] < middleGamePieceOrder[b._piece];
+		case 1:
+			return endGamePieceOrder[a._piece] < endGamePieceOrder[b._piece];
+		}
+		return 0;
+	}
+	
 }
 
 void Position::getLegalMoves(list<Move>& moves, int turn)
@@ -399,7 +419,8 @@ void Position::getLegalMoves(list<Move>& moves, int turn)
 	getRawMoves(moves, turn);
 	addEnPassant(moves, turn);
 	addCastling(moves, turn);
-	isCheck(moves, turn);
+
+	queenThreatened = isCheck(moves, turn);
 
 	auto temp = calculateMaterialValue();
 	double whiteMaterial = temp.first;
@@ -426,10 +447,11 @@ void Position::getRawMoves(std::list<Move>& moves, int turn)
 	}
 }
 
-void Position::isCheck(std::list<Move>& moves, int turn)
+bool Position::isCheck(std::list<Move>& moves, int turn)
 {
 	//Tile king = turn ? *_blackKing : *_whiteKing;
 	Tile king;
+	Tile queen;
 	for (int i = 0; i < 8; i++)
 	{
 		for (int j = 0; j < 8; j++)
@@ -440,10 +462,15 @@ void Position::isCheck(std::list<Move>& moves, int turn)
 			{
 				king = Tile(j, i);
 			}
+			else if (chessPiece != NULL && (chessPiece->getCode() == WQ || chessPiece->getCode() == BQ) && chessPiece->getColor() == getTurn())
+			{
+				queen = Tile(j, i);
+			}
 		}
 	}	
 
 	std::list<Move> safeMoves;
+	bool queenThreatened = false;
 
 	for (Move move : moves)
 	{
@@ -452,14 +479,22 @@ void Position::isCheck(std::list<Move>& moves, int turn)
 		newPosition.updatePosition(&move, false);
 
 		Tile kingTile = move.getOrigin() == king ? move.getDestination() : king;
+		Tile queenTile = move.getOrigin() == queen ? move.getDestination() : queen;
+
 
 		if (newPosition.isTileThreatened(kingTile, !turn) == false)
-		{
 			safeMoves.push_back(move);
-		}
+
+		//Check if queen is threatened for pieceMoveOrder
+		if (newPosition.isTileThreatened(queenTile, !turn) == true && queenThreatened == false)
+			queenThreatened = true;
+		else if (newPosition.isTileThreatened(queenTile, !turn) == false && queenThreatened == false)
+			queenThreatened =  false;
+		
 	}
 
 	moves = safeMoves;
+	return queenThreatened;
 
 }
 
@@ -697,10 +732,18 @@ double Position::evaluate(int turn, Move move)
 	double material = whiteMaterial - blackMaterial;
 	double pieceTileValue = calculatePieceTileValueAndCenterControl(inEndGamePhase);
 	double castlingValue = calculateCastlingValue(move);
+
+	Position newPos;
+
+	
+
+	//bool queenThreatened = ((move._piece == 3) && (isTileThreatened(move.getOrigin(), turn)));
+
+	//if (queenThreatened)
 	//double middleControlValue = calculateMiddleControlValue();
 
 	// Palautetaan eri tekijöiden painotettu summa.
-	return materialMultiplier * material - pieceTileMultiplier * pieceTileValue - castlingValue * pieceTileMultiplier; // + linjaKerroin * linjat + ... jne
+	return materialMultiplier * material + pieceTileMultiplier * pieceTileValue - castlingValue * pieceTileMultiplier; // + linjaKerroin * linjat + ... jne
 }
 
 

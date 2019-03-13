@@ -42,7 +42,7 @@ public:
 	void getLegalMoves(std::list<Move>& moves, int turn);
 	void getRawMoves(std::list<Move>& moves, int turn);
 
-	void isCheck(std::list<Move>& moves, int turn);
+	bool isCheck(std::list<Move>& moves, int turn);
 
 	void addCastling(std::list<Move>& moves, int turn);
 	void addEnPassant(std::list<Move>& moves, int turn);
