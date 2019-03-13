@@ -532,11 +532,11 @@ double Position::endResult(int turn)
 
 	if (isTileThreatened(turn ? _BlackKing : _WhiteKing, !turn)) {
 
-		return 0; // tasapeli (patti)
+		return turn ? 1000000 : -1000000;	// matti
 	}
 	else
 	{
-		return turn ? 1000000 : -1000000;	// matti
+		return 0; // tasapeli (patti)
 	}
 }
 
@@ -837,8 +837,6 @@ double Position::calculateCastlingValue(Move currentMove)
 
 double Position::calculateKingSafetyValue(bool inEndGamePhase5)
 {
-	//Liian väsyny korjaa sä.. ota kommentit pois ja kato mitä sanoo
-
 	int value = 0;
 
 	Tile king = _turn ? _BlackKing : _WhiteKing;
