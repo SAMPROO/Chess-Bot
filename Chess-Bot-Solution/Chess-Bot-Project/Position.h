@@ -44,6 +44,8 @@ public:
 
 	bool isCheck(std::list<Move>& moves, int turn);
 
+	bool getRawMoveAndIsCheck(std::list<Move>& moves, int turn);
+
 	void addCastling(std::list<Move>& moves, int turn);
 	void addEnPassant(std::list<Move>& moves, int turn);
 	
@@ -58,7 +60,7 @@ public:
 	pair<double, double> calculateMaterialValue();
 	double calculatePieceTileValueAndCenterControl(/*Move currentMove, int turn*/bool materialValue);
 	double calculateCastlingValue(Move move);
-	double calculateMiddleControllValue();
+	double calculateKingSafetyValue(bool inEndGamePhase);
 
 	double inf = numeric_limits<double>::infinity();
 

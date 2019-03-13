@@ -14,7 +14,7 @@ const double 	kingValue = 200,
 		bishopValue	=	3.25,
 		horseValue	=	3,
 		pawnValue	=	1,
-		pieceCombinedValue	=	kingValue + queenValue + (rookValue + bishopValue + horseValue) * 2 + pawnValue * 8;
+		pieceCombinedValue	=	/*kingValue + */queenValue + (rookValue + bishopValue + horseValue) * 2 + pawnValue * 8;
 
 ChessPiece* Position::wRook = new Rook(L"\u2656", 0, WR, rookValue);
 ChessPiece* Position::wHorse = new Horse(L"\u2658", 0, WH, horseValue);
@@ -51,18 +51,18 @@ Position::Position() {
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
 	{
-		/*board[i][1] = wPawn;
-		board[i][6] = bPawn;*/
+		board[i][1] = wPawn;
+		board[i][6] = bPawn;
 	}
 
-	/*board[0][7] = bRook;
+	board[0][7] = bRook;
 	board[1][7] = bHorse;
-	board[2][7] = bBishop;*/
+	board[2][7] = bBishop;
 	board[3][7] = bQueen;
 	board[4][7] = bKing;
-	/*board[5][7] = bBishop;
+	board[5][7] = bBishop;
 	board[6][7] = bHorse;
-	board[7][7] = bRook;*/
+	board[7][7] = bRook;
 }
 
 void Position::updatePosition(Move* move, bool realMove, bool aiMove)
@@ -416,11 +416,12 @@ bool my_compare(Move &a, Move &b)
 
 void Position::getLegalMoves(list<Move>& moves, int turn)
 {
-	getRawMoves(moves, turn);
+	queenThreatened = getRawMoveAndIsCheck(moves, turn);
+	//getRawMoves(moves, turn);
 	addEnPassant(moves, turn);
 	addCastling(moves, turn);
 
-	queenThreatened = isCheck(moves, turn);
+	//queenThreatened = isCheck(moves, turn);
 
 	auto temp = calculateMaterialValue();
 	double whiteMaterial = temp.first;
@@ -491,6 +492,62 @@ bool Position::isCheck(std::list<Move>& moves, int turn)
 		else if (newPosition.isTileThreatened(queenTile, !turn) == false && queenThreatened == false)
 			queenThreatened =  false;
 		
+	}
+
+	moves = safeMoves;
+	return queenThreatened;
+
+}
+
+bool Position::getRawMoveAndIsCheck(std::list<Move>& moves, int turn)
+{
+	//Tile king = turn ? *_blackKing : *_whiteKing;
+	Tile king;
+	Tile queen;
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			ChessPiece * chessPiece = board[i][j];
+
+			if (chessPiece != NULL && chessPiece->getColor() == turn)
+			{
+				chessPiece->getMoves(moves, &Tile(j, i), this, turn);
+			}
+
+			if (chessPiece != NULL && (chessPiece->getCode() == WK || chessPiece->getCode() == BK) && chessPiece->getColor() == getTurn())
+			{
+				king = Tile(j, i);
+			}
+			else if (chessPiece != NULL && (chessPiece->getCode() == WQ || chessPiece->getCode() == BQ) && chessPiece->getColor() == getTurn())
+			{
+				queen = Tile(j, i);
+			}
+		}
+	}
+
+	std::list<Move> safeMoves;
+	bool queenThreatened = false;
+
+	for (Move move : moves)
+	{
+		Position newPosition = *this;
+
+		newPosition.updatePosition(&move, false);
+
+		Tile kingTile = move.getOrigin() == king ? move.getDestination() : king;
+		Tile queenTile = move.getOrigin() == queen ? move.getDestination() : queen;
+
+
+		if (newPosition.isTileThreatened(kingTile, !turn) == false)
+			safeMoves.push_back(move);
+
+		//Check if queen is threatened for pieceMoveOrder
+		if (newPosition.isTileThreatened(queenTile, !turn) == true && queenThreatened == false)
+			queenThreatened = true;
+		else if (newPosition.isTileThreatened(queenTile, !turn) == false && queenThreatened == false)
+			queenThreatened = false;
+
 	}
 
 	moves = safeMoves;
@@ -720,7 +777,7 @@ double Position::evaluate(int turn, Move move)
 	// kertoimet ovat yleensä tätä pienempiä, koska materiaali on kaikkein
 	// tärkein yksittäinen tekijä.
 	const double materialMultiplier = 1.0;
-	const double pieceTileMultiplier = 0.01;
+	const double pieceTileMultiplier = 0.1;
 
 	// Materiaali
 	auto temp = calculateMaterialValue();
@@ -732,6 +789,7 @@ double Position::evaluate(int turn, Move move)
 	double material = whiteMaterial - blackMaterial;
 	double pieceTileValue = calculatePieceTileValueAndCenterControl(inEndGamePhase);
 	double castlingValue = calculateCastlingValue(move);
+	double kingProtectionValue = calculateKingSafetyValue(inEndGamePhase);
 
 	Position newPos;
 
@@ -743,7 +801,7 @@ double Position::evaluate(int turn, Move move)
 	//double middleControlValue = calculateMiddleControlValue();
 
 	// Palautetaan eri tekijöiden painotettu summa.
-	return materialMultiplier * material + pieceTileMultiplier * pieceTileValue - castlingValue * pieceTileMultiplier; // + linjaKerroin * linjat + ... jne
+	return materialMultiplier * material + pieceTileMultiplier * pieceTileValue + castlingValue * pieceTileMultiplier + kingProtectionValue * pieceTileMultiplier; // + linjaKerroin * linjat + ... jne
 }
 
 
@@ -758,7 +816,9 @@ pair<double, double> Position::calculateMaterialValue()
 		{
 			if (board[x][y] != NULL)
 			{
-				if (board[x][y]->getColor())
+				//board[x][y]->getColor() ? (blackValue += board[x][y]->getValue()) : (whiteValue += board[x][y]->getValue());
+
+				if (board[x][y]->getColor() )
 					blackValue += board[x][y]->getValue();
 				else
 					whiteValue += board[x][y]->getValue();
@@ -768,6 +828,8 @@ pair<double, double> Position::calculateMaterialValue()
 
 	return make_pair(whiteValue, blackValue);
 }
+
+
 
 const int pawnMiddleGameTable[/*64*/] = {
 		0, 0, 0, 0, 0, 0, 0, 0,
@@ -934,10 +996,10 @@ double getGameTableValue(int index, int code, bool inEndGamePhase)
 const int middleControlTable[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 20, 20, 20, 20, 0, 0,
+	0, 0, 10, 10, 10, 10, 0, 0,
+	0, 0, 10, 20, 20, 10, 0, 0,
+	0, 0, 10, 25, 25, 10, 0, 0,
 	0, 0, 20, 25, 25, 20, 0, 0,
-	0, 0, 20, 30, 30, 20, 0, 0,
-	0, 0, 20, 20, 20, 20, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -969,7 +1031,7 @@ double Position::calculateCastlingValue(Move currentMove)
 {
 	// Short Rook
 	if (currentMove.isShortRook())
-		return 100;
+		return 130;
 	// Long Rook
 	else if (currentMove.isLongRook())
 		return 150;
@@ -977,10 +1039,55 @@ double Position::calculateCastlingValue(Move currentMove)
 		return 0;
 }
 
-
-double Position::calculateMiddleControllValue()
+double Position::calculateKingSafetyValue(bool inEndGamePhase)
 {
-	return 0.0;
+	double value = 0;
+
+	for (int x = 0; x < 8; x++)
+	{
+		for (int y = 0; y < 8; y++)
+		{
+			if (board[x][y] != NULL && (board[x][y]->getCode() == WK || board[x][y]->getCode() == BK) && board[x][y]->getColor() == getTurn())
+			{
+				
+				//Liian väsyny korjaa sä.. ota kommentit pois ja kato mitä sanoo
+
+				/*if (y < 7)
+					if (board[x][y + 1] != NULL && board[x][y + 1]->getColor == _turn)
+						value += 20.0;
+				if (y > 0)
+					if(board[x][y - 1] != NULL && board[x][y - 1]->getColor == _turn)
+					value += 20.0;
+
+
+				if (x < 7)
+					if (board[x + 1][y] != NULL && board[x + 1][y]->getColor == _turn)
+					value += 20.0;
+				if (x > 0)
+					if (board[x - 1][y] != NULL && board[x - 1][y]->getColor == _turn)
+					value += 20.0;
+
+
+				if (x < 7)
+					if (board[x + 1][y + 1] != NULL && board[x + 1][y + 1]->getColor == _turn)
+					value += 20.0;
+				if (x < 7 && y > 0)
+					if (board[x + 1][y - 1] != NULL && board[x + 1][y - 1]->getColor == _turn)
+					value += 20.0;
+
+
+				if (y < 7 && x > 0)
+					if (board[x - 1][y + 1] != NULL && board[x - 1][y + 1]->getColor == _turn)
+					value += 20.0;
+				if (y > 0 && x > 0)
+					if (board[x - 1][y - 1] != NULL && board[x - 1][y - 1]->getColor == _turn)
+					value += 20.0;*/
+
+				return value;
+			}
+		}
+	}
+	return value;
 }
 
 //double Position::calculatePieceTileValue(Move currentMove, int turn)
