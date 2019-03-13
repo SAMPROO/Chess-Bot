@@ -109,3 +109,98 @@ Move UI::getOpponentMove(string inputOpponentMove, bool colorSelection)
 
 	return opponentMove;
 }
+
+void UI::printMoves(std::list<Move>& moves, int colorSelection)
+{
+	Tile currentOriginTile = Tile();
+	for (Move s : moves)
+	{
+		if (s.isShortRook())
+			wcout << "\n0-0";
+		else if (s.isLongRook())
+			wcout << "\n0-0-0";
+		else
+		{
+			Tile newOriginTile = s.getOrigin();
+			if (currentOriginTile != newOriginTile)
+			{
+				wcout << endl;
+
+				currentOriginTile = newOriginTile;
+				int y = currentOriginTile.getRow();
+				wcout << (char)(currentOriginTile.getColumn() + 'a')
+					<< (char)((colorSelection ? y : 7 - y) + '1')
+					<< " -> ";
+			}
+			else
+			{
+				wcout << ", ";
+			}
+
+			Tile destinationTile = s.getDestination();
+			int y = destinationTile.getRow();
+			wcout << (char)(destinationTile.getColumn() + 'a')
+				<< (char)((colorSelection ? y : 7 - y) + '1');
+
+			if (s.isPromoted() > -1)
+			{
+				char promotedChar = 0;
+				switch (s.isPromoted())
+				{
+				case 0:
+					promotedChar = 'R';
+					break;
+				case 1:
+					promotedChar = 'H';
+					break;
+				case 2:
+					promotedChar = 'B';
+					break;
+				case 3:
+					promotedChar = 'Q';
+					break;
+				}
+				wcout << promotedChar;
+			}
+		}
+	}
+
+	wcout << endl;
+}
+
+void UI::printMove(Move move, int colorSelection)
+{
+	if (move.isShortRook())
+		wcout << "0-0";
+	else if (move.isLongRook())
+		wcout << "0-0-0";
+	else
+	{
+		Tile origin = move.getOrigin();
+		Tile destination = move.getDestination();
+		wcout << (char)(origin.getColumn() + 'a') << (char)((colorSelection ? origin.getRow() : 7 - origin.getRow()) + '1') << "-"
+			<< (char)(destination.getColumn() + 'a') << (char)((colorSelection ? destination.getRow() : 7 - destination.getRow()) + '1');
+
+		if (move.isPromoted() > -1)
+		{
+			char promotedChar = 0;
+			switch (move.isPromoted())
+			{
+			case 0:
+				promotedChar = 'R';
+				break;
+			case 1:
+				promotedChar = 'H';
+				break;
+			case 2:
+				promotedChar = 'B';
+				break;
+			case 3:
+				promotedChar = 'Q';
+				break;
+			}
+			wcout << promotedChar;
+		}
+	}
+	wcout << endl;
+}

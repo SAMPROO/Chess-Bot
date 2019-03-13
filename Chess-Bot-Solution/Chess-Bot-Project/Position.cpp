@@ -130,34 +130,22 @@ void Position::updatePosition(Move* move, bool realMove, bool aiMove)
 		ChessPiece * chessPiece = board[originColumn][originRow];
 		auto pieceCode = chessPiece->getCode();
 
-		/*if (pieceCode == BK)
-			_blackKing = &tileDestination;
-		else if (pieceCode == WK)
-			_whiteKing = &tileDestination;*/
+		switch (pieceCode)
+		{
+		case BR:
+		case WR:
+			if (originColumn)
+				setShortRookMoved();
+			else
+				setLongRookMoved();
+			break;
 
-		/*if (realMove)
-		{*/
-			switch (pieceCode)
-			{
-			case BR:
-			case WR:
-				if (originColumn)
-					setShortRookMoved();
-				else
-					setLongRookMoved();
-				break;
+		case BK:
+		case WK:
+			setKingMoved();
+			break;
+		}
 
-			case BK:
-			case WK:
-				setKingMoved();
-				break;
-			}
-
-			/*_moveStack->setCapturedPiece(board[destinationColumn][destinationRow]);
-			
-			if (move->isEnPassant())
-				_moveStack->setEnPassant(board[destinationColumn][destinationRow + (turn ? 1 : -1)]);*/
-		//}
 		if (move->isPromoted() > -1)
 		{
 			switch (move->isPromoted())
@@ -175,50 +163,6 @@ void Position::updatePosition(Move* move, bool realMove, bool aiMove)
 				chessPiece = _turn ? bQueen : wQueen;
 				break;
 			}
-
-			//if (aiMove == false)
-			//{
-			//	wstring Q = turn ? bQueen->getUnicode() : wQueen->getUnicode();
-			//	wstring H = turn ? bHorse->getUnicode() : wHorse->getUnicode();
-			//	wstring R = turn ? bRook->getUnicode() : wRook->getUnicode();
-			//	wstring B = turn ? bBishop->getUnicode() : wBishop->getUnicode();
-
-			//	wcout << "\n" << Q << " " << H << " " << R << " " << B
-			//		<< "\nQ H R B"
-			//		<< "\n\nPromote to: ";
-
-			//	char selection;
-			//	do {
-			//		cin >> selection;
-			//		selection = tolower(selection);
-			//	} while (selection != 'q' && selection != 'h' && selection != 'r' && selection != 'b');
-
-			//	switch (selection)
-			//	{
-			//	case 'q':
-			//		chessPiece = turn ? bQueen : wQueen;
-			//		break;
-			//	case 'h':
-			//		chessPiece = turn ? bHorse : wHorse;
-			//		break;
-			//	case 'r':
-			//		chessPiece = turn ? bRook : wRook;
-			//		break;
-			//	case 'b':
-			//		chessPiece = turn ? bBishop : wBishop;
-			//		break;
-			//	}
-			//}
-			//else
-			//{
-			//	//AI CHOOSES WHICH TO PROMOTE TO
-			//	chessPiece = turn ? bQueen : wQueen;
-			//	chessPiece = turn ? bHorse : wHorse;
-
-			//	Position newPosition = *this;
-			//	newPosition.updatePosition(move, false);
-			//}
-
 		}
 
 		if (move->isEnPassant())
@@ -228,8 +172,6 @@ void Position::updatePosition(Move* move, bool realMove, bool aiMove)
 		board[originColumn][originRow] = NULL;
 	}
 
-	/*if (realMove)
-		*/
 	changeTurn();
 }
 
@@ -257,70 +199,6 @@ void Position::undoMove()
 	_previousMove = previousPosition->_previousMove;
 
 	_positionStack->pop();
-
-	//delete previousPosition;
-
-	//Move move = _positionStack->getMove();
-
-	//int row = getTurn() ? 7 : 0;
-	//int turn = getTurn();
-
-	//// Undo short Rook
-	//if (move.isShortRook()) {
-	//	board[4][row] = board[6][row]; // King to new position
-	//	board[6][row] = NULL; // Clear old position
-	//	board[7][row] = board[5][row]; // Rook to new position
-	//	board[5][row] = NULL; // Clear old position
-
-	//	/*if (turn)
-	//		_blackKing = &Tile(row, 4);
-	//	else
-	//		_whiteKing = &Tile(row, 4);*/
-	//}
-	//// Undo long Rook
-	//else if (move.isLongRook()) {
-	//	board[4][row] = board[2][row]; // King to new position
-	//	board[2][row] = NULL; // Clear old position
-	//	board[0][row] = board[3][row]; // Rook to new position
-	//	board[3][row] = NULL; // Clear old position
-
-	//	/*if (turn)
-	//		_blackKing = &Tile(row, 4);
-	//	else
-	//		_whiteKing = &Tile(row, 4);*/
-	//}
-	//// Undo normal move
-	//else
-	//{
-	//	Tile tileOrigin = move.getOrigin();
-	//	Tile tileDestination = move.getDestination();
-
-	//	int destinationRow = tileDestination.getRow();
-	//	int destinationColumn = tileDestination.getColumn();
-
-	//	int originRow = tileOrigin.getRow();
-	//	int originColumn = tileOrigin.getColumn();
-
-	//	if (move.isPromoted() == false)
-	//		board[originColumn][originRow] = board[destinationColumn][destinationRow];
-	//	else
-	//		board[originColumn][originRow] = !turn ? bPawn : wPawn;
-
-
-	//	board[destinationColumn][destinationRow] = _positionStack->getCapturedPiece();
-	//	
-	//	if (move.isEnPassant())
-	//		board[destinationColumn][destinationRow + (turn ? 1 : -1)] = _positionStack->getEnPassant();
-
-	//	/*auto pieceCode = board[originColumn][originRow]->getCode();
-
-	//	if (pieceCode == BK)
-	//		_blackKing = &tileOrigin;
-	//	else if (pieceCode == WK)
-	//		_whiteKing = &tileOrigin;*/
-	//}
-
-	//_positionStack->pop();
 }
 
 int Position::getTurn()
@@ -416,18 +294,17 @@ bool my_compare(Move &a, Move &b)
 
 void Position::getLegalMoves(list<Move>& moves, int turn)
 {
-	queenThreatened = getRawMoveAndIsCheck(moves, turn);
-	//getRawMoves(moves, turn);
+	getRawMoves(moves, turn);
 	addEnPassant(moves, turn);
 	addCastling(moves, turn);
-
-	//queenThreatened = isCheck(moves, turn);
+	isCheck(moves, turn);
 
 	auto temp = calculateMaterialValue();
 	double whiteMaterial = temp.first;
 	double blackMaterial = temp.second;
 
 	inEndGamePhase = (turn ? blackMaterial : whiteMaterial) <= (pieceCombinedValue / 2);
+	queenThreatened = isTileThreatened((turn ? _BlackQueen : _WhiteQueen), !turn);
 
 	moves.sort(my_compare);
 }
@@ -438,11 +315,31 @@ void Position::getRawMoves(std::list<Move>& moves, int turn)
 	{
 		for (int j = 0; j < 8; j++)
 		{
-			ChessPiece * chessPiece = board[j][i];
+			ChessPiece * chessPiece = board[i][j];
 
-			if (chessPiece != NULL && chessPiece->getColor() == turn)
+			if (chessPiece != NULL)
 			{
-				chessPiece->getMoves(moves, &Tile(i, j), this, turn);
+				if (chessPiece->getColor() == turn)
+				{
+					chessPiece->getMoves(moves, &Tile(j, i), this, turn);
+				}
+
+				if (chessPiece->getCode() == BK)
+				{
+					_BlackKing = Tile(j, i);
+				}
+				else if (chessPiece->getCode() == WK)
+				{
+					_WhiteKing = Tile(j, i);
+				}
+				else if (chessPiece->getCode() == BQ)
+				{
+					_BlackQueen = Tile(j, i);
+				}
+				else if (chessPiece->getCode() == WQ)
+				{
+					_WhiteQueen = Tile(j, i);
+				}
 			}
 		}
 	}
@@ -450,28 +347,9 @@ void Position::getRawMoves(std::list<Move>& moves, int turn)
 
 bool Position::isCheck(std::list<Move>& moves, int turn)
 {
-	//Tile king = turn ? *_blackKing : *_whiteKing;
-	Tile king;
-	Tile queen;
-	for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 8; j++)
-		{
-			ChessPiece * chessPiece = board[i][j];
-
-			if (chessPiece != NULL && (chessPiece->getCode() == WK || chessPiece->getCode() == BK) && chessPiece->getColor() == getTurn())
-			{
-				king = Tile(j, i);
-			}
-			else if (chessPiece != NULL && (chessPiece->getCode() == WQ || chessPiece->getCode() == BQ) && chessPiece->getColor() == getTurn())
-			{
-				queen = Tile(j, i);
-			}
-		}
-	}	
+	Tile king = turn ? _BlackKing : _WhiteKing;
 
 	std::list<Move> safeMoves;
-	bool queenThreatened = false;
 
 	for (Move move : moves)
 	{
@@ -480,78 +358,12 @@ bool Position::isCheck(std::list<Move>& moves, int turn)
 		newPosition.updatePosition(&move, false);
 
 		Tile kingTile = move.getOrigin() == king ? move.getDestination() : king;
-		Tile queenTile = move.getOrigin() == queen ? move.getDestination() : queen;
-
 
 		if (newPosition.isTileThreatened(kingTile, !turn) == false)
 			safeMoves.push_back(move);
-
-		//Check if queen is threatened for pieceMoveOrder
-		if (newPosition.isTileThreatened(queenTile, !turn) == true && queenThreatened == false)
-			queenThreatened = true;
-		else if (newPosition.isTileThreatened(queenTile, !turn) == false && queenThreatened == false)
-			queenThreatened =  false;
-		
 	}
 
 	moves = safeMoves;
-	return queenThreatened;
-
-}
-
-bool Position::getRawMoveAndIsCheck(std::list<Move>& moves, int turn)
-{
-	//Tile king = turn ? *_blackKing : *_whiteKing;
-	Tile king;
-	Tile queen;
-	for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 8; j++)
-		{
-			ChessPiece * chessPiece = board[i][j];
-
-			if (chessPiece != NULL && chessPiece->getColor() == turn)
-			{
-				chessPiece->getMoves(moves, &Tile(j, i), this, turn);
-			}
-
-			if (chessPiece != NULL && (chessPiece->getCode() == WK || chessPiece->getCode() == BK) && chessPiece->getColor() == getTurn())
-			{
-				king = Tile(j, i);
-			}
-			else if (chessPiece != NULL && (chessPiece->getCode() == WQ || chessPiece->getCode() == BQ) && chessPiece->getColor() == getTurn())
-			{
-				queen = Tile(j, i);
-			}
-		}
-	}
-
-	std::list<Move> safeMoves;
-	bool queenThreatened = false;
-
-	for (Move move : moves)
-	{
-		Position newPosition = *this;
-
-		newPosition.updatePosition(&move, false);
-
-		Tile kingTile = move.getOrigin() == king ? move.getDestination() : king;
-		Tile queenTile = move.getOrigin() == queen ? move.getDestination() : queen;
-
-
-		if (newPosition.isTileThreatened(kingTile, !turn) == false)
-			safeMoves.push_back(move);
-
-		//Check if queen is threatened for pieceMoveOrder
-		if (newPosition.isTileThreatened(queenTile, !turn) == true && queenThreatened == false)
-			queenThreatened = true;
-		else if (newPosition.isTileThreatened(queenTile, !turn) == false && queenThreatened == false)
-			queenThreatened = false;
-
-	}
-
-	moves = safeMoves;
-	return queenThreatened;
 
 }
 
@@ -632,12 +444,10 @@ bool Position::isTileThreatened(Tile tile, int enemyColor)
 
 	for (Move move : enemyMoves)
 	{
-		Tile origin = move.getOrigin();
-		ChessPiece * chessPiece = board[origin.getColumn()][origin.getRow()];
-
-		if (chessPiece != NULL && move.getDestination() == tile)
+		if (move.getDestination() == tile)
 		{
-			if (chessPiece->getCode() == WP || chessPiece->getCode() == BP)
+			Tile origin = move.getOrigin();
+			if (board[origin.getColumn()][origin.getRow()]->getCode() == !enemyColor ? BP : WP)
 			{
 				return origin.getColumn() != tile.getColumn();
 			}
@@ -681,7 +491,7 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 
 	}
 	// alustetaan paluuarvo huonoimmaksi mahdolliseksi.
-	returnValue._evaluationValue = (turn ? inf : -inf);
+	returnValue._evaluationValue = (turn ? 1000000 : -1000000);
 
 	// Rekursioaskel: kokeillaan jokaista laillista siirtoa
 	for (auto move : moves)
@@ -720,23 +530,7 @@ double Position::endResult(int turn)
 	// Asemassa ei ole en‰‰ laillisia siirtoja. Etsit‰‰n siirtovuoroisen pelaajan
 	// kuningas; jos kuningas on uhattu, on pelaaja h‰vinnyt (muuten tasapeli, "patti").
 
-	// Kuninkaan sijainti (x,y).
-	//Tile king = turn ? *_blackKing : *_whiteKing;
-	ChessPiece * king = turn ? bKing : wKing;
-	int kx, ky;
-	for (int x = 0; x < 8; ++x)
-	{
-		for (int y = 0; y < 8; ++y)
-		{
-			if (board[x][y] == king)
-			{
-				kx = x;
-				ky = y;
-			}
-		}
-	}
-
-	if (isTileThreatened(Tile(kx, ky)/*king*/, !turn)) {
+	if (isTileThreatened(turn ? _BlackKing : _WhiteKing, !turn)) {
 
 		return 0; // tasapeli (patti)
 	}
@@ -776,20 +570,18 @@ double Position::evaluate(int turn, Move move)
 	// osaamista. T‰ss‰ materiaalin t‰rkeydeksi on asetettu 1. Muiden tekijˆiden
 	// kertoimet ovat yleens‰ t‰t‰ pienempi‰, koska materiaali on kaikkein
 	// t‰rkein yksitt‰inen tekij‰.
-	const double materialMultiplier = 1.0;
-	const double pieceTileMultiplier = 0.1;
 
 	// Materiaali
 	auto temp = calculateMaterialValue();
 	double whiteMaterial = temp.first;
 	double blackMaterial = temp.second;
 
-	bool inEndGamePhase = (turn ? blackMaterial : whiteMaterial) <= (pieceCombinedValue / 2);
+	bool inEndGamePhase2 = (turn ? blackMaterial : whiteMaterial) <= (pieceCombinedValue / 2);
 
 	double material = whiteMaterial - blackMaterial;
-	double pieceTileValue = calculatePieceTileValueAndCenterControl(inEndGamePhase);
+	double pieceTileValue = calculatePieceTileValueAndCenterControl(inEndGamePhase2);
 	double castlingValue = calculateCastlingValue(move);
-	double kingProtectionValue = calculateKingSafetyValue(inEndGamePhase);
+	double kingProtectionValue = calculateKingSafetyValue(inEndGamePhase2);
 
 	Position newPos;
 
@@ -801,7 +593,11 @@ double Position::evaluate(int turn, Move move)
 	//double middleControlValue = calculateMiddleControlValue();
 
 	// Palautetaan eri tekijˆiden painotettu summa.
-	return materialMultiplier * material + pieceTileMultiplier * pieceTileValue + castlingValue * pieceTileMultiplier + kingProtectionValue * pieceTileMultiplier; // + linjaKerroin * linjat + ... jne
+	return 
+		1.0 * material - 
+		0.1 * pieceTileValue + 
+		0.1 * castlingValue + 
+		0.5 * kingProtectionValue;
 }
 
 
@@ -959,34 +755,34 @@ const int kingEndGameTable[] = {
 	0, 20, 35, 45, 45, 35, 20, 0,
 	-10, 10, 15, 20, 20, 15, 10, -10 };
 
-double getGameTableValue(int index, int code, bool inEndGamePhase)
+double getGameTableValue(int index, int code, bool inEndGamePhase3)
 {
 
 	switch (code)
 	{
 	case BR:
 	case WR:
-		return inEndGamePhase ? rookEndGameTable[index] : rookMiddleGameTable[index];
+		return inEndGamePhase3 ? rookEndGameTable[index] : rookMiddleGameTable[index];
 
 	case BH:
 	case WH:
-		return inEndGamePhase ? horseEndGameTable[index] : horseMiddleGameTable[index];
+		return inEndGamePhase3 ? horseEndGameTable[index] : horseMiddleGameTable[index];
 
 	case BB:
 	case WB:
-		return inEndGamePhase ? bishopEndGameTable[index] : bishopMiddleGameTable[index];
+		return inEndGamePhase3 ? bishopEndGameTable[index] : bishopMiddleGameTable[index];
 
 	case BQ:
 	case WQ:
-		return inEndGamePhase ? queenEndGameTable[index] : queenMiddleGameTable[index];
+		return inEndGamePhase3 ? queenEndGameTable[index] : queenMiddleGameTable[index];
 
 	case BK:
 	case WK:
-		return inEndGamePhase ? kingEndGameTable[index] : kingMiddleGameTable[index];
+		return inEndGamePhase3 ? kingEndGameTable[index] : kingMiddleGameTable[index];
 
 	case BP:
 	case WP:
-		return inEndGamePhase ? pawnEndGameTable[index] : pawnMiddleGameTable[index];
+		return inEndGamePhase3 ? pawnEndGameTable[index] : pawnMiddleGameTable[index];
 	default:
 		return 0;
 	}
@@ -1003,7 +799,7 @@ const int middleControlTable[] = {
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0 };
 
-double Position::calculatePieceTileValueAndCenterControl(bool inEndGamePhase)
+double Position::calculatePieceTileValueAndCenterControl(bool inEndGamePhase4)
 {
 	double whiteValue = 0;
 	double blackValue = 0;
@@ -1014,12 +810,12 @@ double Position::calculatePieceTileValueAndCenterControl(bool inEndGamePhase)
 		{
 			if (board[x][y] != NULL)
 			{
-				int index = y * 8 + x + 1;
+				int index = y * 9 + x;
 
 				if (board[x][y]->getColor())					
-					blackValue += getGameTableValue(index, board[x][y]->getCode(), inEndGamePhase) + middleControlTable[index];
+					blackValue += getGameTableValue(index, board[x][y]->getCode(), inEndGamePhase4) + middleControlTable[index];
 				else
-					whiteValue += getGameTableValue(index, board[x][y]->getCode(), inEndGamePhase) + middleControlTable[index];
+					whiteValue += getGameTableValue(index, board[x][y]->getCode(), inEndGamePhase4) + middleControlTable[index];
 			}
 		}
 	}
@@ -1039,54 +835,37 @@ double Position::calculateCastlingValue(Move currentMove)
 		return 0;
 }
 
-double Position::calculateKingSafetyValue(bool inEndGamePhase)
+double Position::calculateKingSafetyValue(bool inEndGamePhase5)
 {
-	double value = 0;
+	//Liian v‰syny korjaa s‰.. ota kommentit pois ja kato mit‰ sanoo
 
-	for (int x = 0; x < 8; x++)
-	{
-		for (int y = 0; y < 8; y++)
-		{
-			if (board[x][y] != NULL && (board[x][y]->getCode() == WK || board[x][y]->getCode() == BK) && board[x][y]->getColor() == getTurn())
-			{
-				
-				//Liian v‰syny korjaa s‰.. ota kommentit pois ja kato mit‰ sanoo
+	int value = 0;
 
-				/*if (y < 7)
-					if (board[x][y + 1] != NULL && board[x][y + 1]->getColor == _turn)
-						value += 20.0;
-				if (y > 0)
-					if(board[x][y - 1] != NULL && board[x][y - 1]->getColor == _turn)
-					value += 20.0;
+	Tile king = _turn ? _BlackKing : _WhiteKing;
 
+	int x = king.getColumn();
+	int y = king.getRow();
 
-				if (x < 7)
-					if (board[x + 1][y] != NULL && board[x + 1][y]->getColor == _turn)
-					value += 20.0;
-				if (x > 0)
-					if (board[x - 1][y] != NULL && board[x - 1][y]->getColor == _turn)
-					value += 20.0;
+	if (y < 7 && board[x][y + 1] != NULL && board[x][y + 1]->getColor() == _turn)
+		value++;
+	if (y > 0 && board[x][y - 1] != NULL && board[x][y - 1]->getColor() == _turn)
+		value++;
 
+	if (x < 7 && board[x + 1][y] != NULL && board[x + 1][y]->getColor() == _turn)
+		value++;
+	if (x > 0 && board[x - 1][y] != NULL && board[x - 1][y]->getColor() == _turn)
+		value++;
 
-				if (x < 7)
-					if (board[x + 1][y + 1] != NULL && board[x + 1][y + 1]->getColor == _turn)
-					value += 20.0;
-				if (x < 7 && y > 0)
-					if (board[x + 1][y - 1] != NULL && board[x + 1][y - 1]->getColor == _turn)
-					value += 20.0;
+	if (x < 7 && y < 7 && board[x + 1][y + 1] != NULL && board[x + 1][y + 1]->getColor() == _turn)
+		value++;
+	if (x < 7 && y > 0 && board[x + 1][y - 1] != NULL && board[x + 1][y - 1]->getColor() == _turn)
+		value++;
 
+	if (y < 7 && x > 0 && board[x - 1][y + 1] != NULL && board[x - 1][y + 1]->getColor() == _turn)
+		value++;
+	if (y > 0 && x > 0 && board[x - 1][y - 1] != NULL && board[x - 1][y - 1]->getColor() == _turn)
+		value++;
 
-				if (y < 7 && x > 0)
-					if (board[x - 1][y + 1] != NULL && board[x - 1][y + 1]->getColor == _turn)
-					value += 20.0;
-				if (y > 0 && x > 0)
-					if (board[x - 1][y - 1] != NULL && board[x - 1][y - 1]->getColor == _turn)
-					value += 20.0;*/
-
-				return value;
-			}
-		}
-	}
 	return value;
 }
 

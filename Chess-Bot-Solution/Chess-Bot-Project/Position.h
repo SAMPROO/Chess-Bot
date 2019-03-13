@@ -44,7 +44,7 @@ public:
 
 	bool isCheck(std::list<Move>& moves, int turn);
 
-	bool getRawMoveAndIsCheck(std::list<Move>& moves, int turn);
+	void getRawMoveAndIsCheck(std::list<Move>& moves, int turn);
 
 	void addCastling(std::list<Move>& moves, int turn);
 	void addEnPassant(std::list<Move>& moves, int turn);
@@ -62,14 +62,13 @@ public:
 	double calculateCastlingValue(Move move);
 	double calculateKingSafetyValue(bool inEndGamePhase);
 
-	double inf = numeric_limits<double>::infinity();
-
-	long _maxTime = 1000;
+	long _maxTime = 3;
 
 	bool _castlingBools[6] = { 0,0,0,0,0,0 };
 	int _turn = 0;
 
-
- 	//Position * _previousPosition;
 	Move _previousMove;
+
+	Tile _BlackKing, _WhiteKing;
+	Tile _BlackQueen, _WhiteQueen;
 };
