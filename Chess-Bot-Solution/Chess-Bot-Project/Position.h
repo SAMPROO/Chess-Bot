@@ -25,9 +25,6 @@ public:
 	static ChessPiece *wKing, *wQueen, *wRook, *wBishop, *wHorse, *wPawn;	// Valkeat nappulat.
 	static ChessPiece *bKing, *bQueen, *bRook, *bBishop, *bHorse, *bPawn;	// Mustat nappulat.
 
-	/*Tile* _whiteKing;
-	Tile* _blackKing;*/
-
 	void updatePosition(Move* move, bool realMove = true, bool aiMove = false);
 	void undoMove();
 
@@ -57,14 +54,15 @@ public:
 
 	double endResult(int turn);
 	double evaluate(int turn, Move move);
-	MinMaxReturn minimax(int depth, double alpha, double beta, int turn, Move currentMove/*, long startTime*/);
+	MinMaxReturn minimax(int depth, double alpha, double beta, int turn, Move currentMove, long startTime);
 	pair<double, double> calculateMaterialValue();
-	double calculatePieceTileValue(/*Move currentMove, int turn*/bool materialValue);
+	double calculatePieceTileValueAndCenterControl(/*Move currentMove, int turn*/bool materialValue);
 	double calculateCastlingValue(Move move);
+	double calculateMiddleControllValue();
 
 	double inf = numeric_limits<double>::infinity();
 
-	long _maxTime = 0;
+	long _maxTime = 1000;
 
 	bool _castlingBools[6] = { 0,0,0,0,0,0 };
 	int _turn = 0;

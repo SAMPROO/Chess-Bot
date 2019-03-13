@@ -8,7 +8,7 @@
 
 #include <chrono>
 
-const double 	kingValue = 4,
+const double 	kingValue = 200,
 		queenValue	=	9,
 		rookValue	=	5,
 		bishopValue	=	3.25,
@@ -33,40 +33,36 @@ ChessPiece* Position::bPawn = new Pawn(L"\u265F", 1, BP, pawnValue);
 Position::Position() {
 
 	_positionStack = new PositionStack();
-	//_maxTime = maxTime;
 
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
 			board[i][j] = NULL;
 
 	// Initialization of white pieces 
-	//board[0][0] = wRook;
-	/*board[1][0] = wHorse;
+	board[0][0] = wRook;
+	board[1][0] = wHorse;
 	board[2][0] = wBishop;
-	board[3][0] = wQueen;*/
+	board[3][0] = wQueen;
 	board[4][0] = wKing;
-	/*board[5][0] = wBishop;
-	board[6][0] = wHorse;*/
-	//board[7][0] = wRook;
+	board[5][0] = wBishop;
+	board[6][0] = wHorse;
+	board[7][0] = wRook;
 
 	//Initialize pawns
 	for (int i = 0; i < 8; i++)
 	{
-		//board[i][1] = wPawn;
-		//board[i][6] = bPawn;
+		board[i][1] = wPawn;
+		board[i][6] = bPawn;
 	}
 
-	board[0][1] = bPawn;
-	board[0][6] = wPawn;
-
-	//board[0][7] = bRook;
-	//board[1][7] = bHorse;
-	//board[2][7] = bBishop;
-	//board[3][7] = bQueen;
-	board[4][7] = bKing;/*
+	board[0][7] = bRook;
+	board[1][7] = bHorse;
+	board[2][7] = bBishop;
+	board[3][7] = bQueen;
+	board[4][7] = bKing;
 	board[5][7] = bBishop;
 	board[6][7] = bHorse;
-	board[7][7] = bRook;*/
+	board[7][7] = bRook;
 }
 
 void Position::updatePosition(Move* move, bool realMove, bool aiMove)
@@ -242,11 +238,11 @@ void Position::undoMove()
 	if (_positionStack->isEmpty())
 		return;
 
+	_positionStack->pop();
+
 	Position * previousPosition = _positionStack->getPosition();
 	if (previousPosition == NULL)
 		return;
-
-	//_positionStack->pop();
 
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
@@ -561,7 +557,7 @@ bool Position::isTileThreatened(Tile tile, int enemyColor)
 	return false;
 }
 
-MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, Move currentMove/*, long startTime*/)
+MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, Move currentMove, long startTime)
 {
 	MinMaxReturn returnValue;
 
@@ -583,7 +579,7 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		return returnValue;
 	}
 
-	/*if (&returnValue != NULL) {
+	if (&returnValue != NULL) {
 
 		long time = clock();
 		long timeGone = time - startTime;
@@ -591,7 +587,7 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		if (_maxTime - (timeGone * 0.001f) <= 0)
 			return returnValue;
 
-	}*/
+	}
 	// alustetaan paluuarvo huonoimmaksi mahdolliseksi.
 	returnValue._evaluationValue = (turn ? inf : -inf);
 
@@ -603,7 +599,7 @@ MinMaxReturn Position::minimax(int depth, double alpha, double beta, int turn, M
 		newPosition.updatePosition(&move, false);
 
 		// Rekursiivinen kutsu.
-		MinMaxReturn value = newPosition.minimax(depth - 1, alpha, beta, !turn, move/*, startTime*/);		
+		MinMaxReturn value = newPosition.minimax(depth - 1, alpha, beta, !turn, move, startTime);		
 
 		// Tutkitaan ollaan löydetty uusi paras siirto.
 		if ((turn && value._evaluationValue < returnValue._evaluationValue) || 
@@ -699,8 +695,9 @@ double Position::evaluate(int turn, Move move)
 	bool inEndGamePhase = (turn ? blackMaterial : whiteMaterial) <= (pieceCombinedValue / 2);
 
 	double material = whiteMaterial - blackMaterial;
-	double pieceTileValue = calculatePieceTileValue(inEndGamePhase);
+	double pieceTileValue = calculatePieceTileValueAndCenterControl(inEndGamePhase);
 	double castlingValue = calculateCastlingValue(move);
+	//double middleControlValue = calculateMiddleControlValue();
 
 	// Palautetaan eri tekijöiden painotettu summa.
 	return materialMultiplier * material - pieceTileMultiplier * pieceTileValue - castlingValue * pieceTileMultiplier; // + linjaKerroin * linjat + ... jne
@@ -838,7 +835,7 @@ const int queenEndGameTable[] = {
 
 
 const int kingMiddleGameTable[] = {
-	-20, 0, 0, -10, -10, 0, 0, -20,
+	-20, 10, 10, -10, -10, 10, 10, -20,
 	-30, -30, -30, -35, -35, -30, -30, -30,
 	-40, -40, -45, -50, -50, -45, -40, -40,
 	-50, -50, -55, -60, -60, -55, -50, -50,
@@ -891,7 +888,17 @@ double getGameTableValue(int index, int code, bool inEndGamePhase)
 
 }
 
-double Position::calculatePieceTileValue(bool inEndGamePhase)
+const int middleControlTable[] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 20, 20, 20, 20, 0, 0,
+	0, 0, 20, 25, 25, 20, 0, 0,
+	0, 0, 20, 30, 30, 20, 0, 0,
+	0, 0, 20, 20, 20, 20, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0 };
+
+double Position::calculatePieceTileValueAndCenterControl(bool inEndGamePhase)
 {
 	double whiteValue = 0;
 	double blackValue = 0;
@@ -902,12 +909,12 @@ double Position::calculatePieceTileValue(bool inEndGamePhase)
 		{
 			if (board[x][y] != NULL)
 			{
-				int index = y * 9 + x;
+				int index = y * 8 + x + 1;
 
 				if (board[x][y]->getColor())					
-					blackValue += getGameTableValue(index, board[x][y]->getCode(), inEndGamePhase);
+					blackValue += getGameTableValue(index, board[x][y]->getCode(), inEndGamePhase) + middleControlTable[index];
 				else
-					whiteValue += getGameTableValue(index, board[x][y]->getCode(), inEndGamePhase);
+					whiteValue += getGameTableValue(index, board[x][y]->getCode(), inEndGamePhase) + middleControlTable[index];
 			}
 		}
 	}
@@ -919,12 +926,18 @@ double Position::calculateCastlingValue(Move currentMove)
 {
 	// Short Rook
 	if (currentMove.isShortRook())
-		return 50;
+		return 100;
 	// Long Rook
 	else if (currentMove.isLongRook())
-		return 60;
+		return 150;
 	else
 		return 0;
+}
+
+
+double Position::calculateMiddleControllValue()
+{
+	return 0.0;
 }
 
 //double Position::calculatePieceTileValue(Move currentMove, int turn)
